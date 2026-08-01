@@ -57,6 +57,7 @@ export interface GoodsItem {
   weightGram: number;
   denier: string;
   shade: string;
+  shadeNo?: string;
   lotNo?: string;
   grade: GradeType;
   rate: number;

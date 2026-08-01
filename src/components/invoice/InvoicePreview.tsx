@@ -28,17 +28,18 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
   const showTransport = transportDetails?.enabled === true;
 
   return (
-    <div
-      ref={previewRef}
-      className="bg-white text-[#1a2332] font-sans p-4 sm:p-6 lg:p-8 rounded-xl shadow-2xl max-w-[210mm] mx-auto text-xs leading-tight transition-all"
-      style={{
-        width: '100%',
-        boxSizing: 'border-box',
-        color: '#1a2332',
-      }}
-    >
-      {/* UNIFIED SINGLE-BORDER MASTER CONTAINER */}
-      <div className="border border-gray-900 bg-white">
+    <div className="bg-white rounded-xl shadow-2xl p-2 sm:p-3 max-w-[210mm] mx-auto overflow-hidden">
+      <div
+        ref={previewRef}
+        className="bg-white text-[#1a2332] font-sans p-4 sm:p-6 text-xs leading-tight"
+        style={{
+          width: '100%',
+          boxSizing: 'border-box',
+          color: '#1a2332',
+        }}
+      >
+        {/* UNIFIED SINGLE-BORDER MASTER CONTAINER */}
+        <div className="border border-gray-900 bg-white">
 
         {/* 1. TOP STRIP */}
         <div className="border-b border-gray-900 flex items-center justify-between px-3 py-1.5 bg-gray-50/60 text-[10.5px] font-mono">
@@ -94,8 +95,8 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
           </p>
         </div>
 
-        {/* 3. INVOICE META ROW (5 Columns) */}
-        <div className="border-b border-gray-900 grid grid-cols-5 divide-x divide-gray-900 bg-gray-50/40 text-[10.5px]">
+        {/* 3. INVOICE META ROW (4 Columns) */}
+        <div className="border-b border-gray-900 grid grid-cols-4 divide-x divide-gray-900 bg-gray-50/40 text-[10.5px]">
           <div className="p-2">
             <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">Invoice No</span>
             <span className="font-mono font-bold text-black">{invoiceDetails.invoiceNo}</span>
@@ -107,10 +108,6 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
           <div className="p-2">
             <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">Challan No</span>
             <span className="font-mono text-black">{invoiceDetails.challanNo || '—'}</span>
-          </div>
-          <div className="p-2">
-            <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">Agent Name</span>
-            <span className="font-medium text-black truncate block">{invoiceDetails.agentName || 'Direct'}</span>
           </div>
           <div className="p-2 bg-amber-50/30">
             <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">GST Type</span>
@@ -181,36 +178,35 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
           </div>
         )}
 
-        {/* 6. GOODS TABLE WITH PROPORTIONS (No Carton, Cheese, Lot No) */}
+        {/* 6. GOODS TABLE WITH PROPORTIONS */}
         <div className="border-b border-gray-900 overflow-x-auto">
           <table className="w-full text-left text-[9.5px] border-collapse table-fixed min-w-[620px]">
             <colgroup>
+              <col style={{ width: '4%' }} />
+              <col style={{ width: '25%' }} />
+              <col style={{ width: '7%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '8%' }} />
+              <col style={{ width: '7%' }} />
+              <col style={{ width: '8%' }} />
+              <col style={{ width: '7%' }} />
               <col style={{ width: '5%' }} />
-              <col style={{ width: '32%' }} />
-              <col style={{ width: '8%' }} />
-              <col style={{ width: '10%' }} />
-              <col style={{ width: '8%' }} />
-              <col style={{ width: '8%' }} />
-              <col style={{ width: '10%' }} />
-              <col style={{ width: '5%' }} />
-              <col style={{ width: '10%' }} />
-              <col style={{ width: '12%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '11%' }} />
             </colgroup>
             <thead>
-              <tr className="bg-gray-100/90 text-gray-900 border-b border-gray-900 font-mono uppercase font-bold text-[8.5px]">
-                <th rowSpan={2} className="p-1 border-r border-gray-900 text-center align-middle">Sr</th>
-                <th rowSpan={2} className="p-1.5 border-r border-gray-900 text-left align-middle">Particulars / Yarn Description</th>
-                <th rowSpan={2} className="p-1 border-r border-gray-900 text-center align-middle">HSN</th>
-                <th colSpan={2} className="p-1 border-r border-b border-gray-900 text-center">Weight</th>
-                <th rowSpan={2} className="p-1 border-r border-gray-900 text-center align-middle">Denier</th>
-                <th rowSpan={2} className="p-1 border-r border-gray-900 text-center align-middle">Shade</th>
-                <th rowSpan={2} className="p-1 border-r border-gray-900 text-center align-middle">Grd</th>
-                <th rowSpan={2} className="p-1 border-r border-gray-900 text-right align-middle">Rate/Kg</th>
-                <th rowSpan={2} className="p-1.5 text-right align-middle">Amount (₹)</th>
-              </tr>
-              <tr className="bg-gray-100/90 text-gray-900 border-b border-gray-900 font-mono uppercase font-bold text-[8px]">
-                <th className="p-0.5 border-r border-gray-900 text-right">Kgs.</th>
-                <th className="p-0.5 border-r border-gray-900 text-right">Grams</th>
+              <tr className="bg-gray-100 text-gray-900 border-b border-gray-900 font-mono uppercase font-bold text-[8.5px]">
+                <th className="p-1.5 border-r border-gray-900 text-center align-middle">Sr</th>
+                <th className="p-1.5 border-r border-gray-900 text-left align-middle">Particulars / Yarn Description</th>
+                <th className="p-1.5 border-r border-gray-900 text-center align-middle">HSN</th>
+                <th className="p-1.5 border-r border-gray-900 text-center align-middle">Shade</th>
+                <th className="p-1.5 border-r border-gray-900 text-center align-middle">Shade No</th>
+                <th className="p-1.5 border-r border-gray-900 text-center align-middle">Denier</th>
+                <th className="p-1.5 border-r border-gray-900 text-right align-middle">Weight (Kgs)</th>
+                <th className="p-1.5 border-r border-gray-900 text-right align-middle">Weight (Gms)</th>
+                <th className="p-1.5 border-r border-gray-900 text-center align-middle">Grd</th>
+                <th className="p-1.5 border-r border-gray-900 text-right align-middle">Rate/Kg</th>
+                <th className="p-1.5 text-right align-middle">Amount (₹)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-300 font-sans text-gray-900 text-[9.5px]">
@@ -225,10 +221,11 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
                       {item.description || 'Yarn Item'}
                     </td>
                     <td className="p-1.5 border-r border-gray-900 text-center font-mono">{item.hsn || '5402'}</td>
+                    <td className="p-1.5 border-r border-gray-900 text-center truncate">{item.shade || '—'}</td>
+                    <td className="p-1.5 border-r border-gray-900 text-center font-mono">{item.shadeNo || '—'}</td>
+                    <td className="p-1.5 border-r border-gray-900 text-center font-mono">{item.denier || '—'}</td>
                     <td className="p-1.5 border-r border-gray-900 text-right font-mono font-semibold">{kgInt}</td>
                     <td className="p-1.5 border-r border-gray-900 text-right font-mono">{gramVal}</td>
-                    <td className="p-1.5 border-r border-gray-900 text-center font-mono">{item.denier || '—'}</td>
-                    <td className="p-1.5 border-r border-gray-900 text-center truncate">{item.shade || '—'}</td>
                     <td className="p-1.5 border-r border-gray-900 text-center font-mono font-bold">{item.grade || 'A'}</td>
                     <td className="p-1.5 border-r border-gray-900 text-right font-mono">{formatCurrency(item.rate)}</td>
                     <td className="p-1.5 text-right font-mono font-bold">{formatCurrency(item.amount)}</td>
@@ -249,6 +246,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
                     <td className="p-1.5 border-r border-gray-900">&nbsp;</td>
                     <td className="p-1.5 border-r border-gray-900">&nbsp;</td>
                     <td className="p-1.5 border-r border-gray-900">&nbsp;</td>
+                    <td className="p-1.5 border-r border-gray-900">&nbsp;</td>
                     <td className="p-1.5">&nbsp;</td>
                   </tr>
                 ))}
@@ -257,16 +255,15 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
             {/* TOTALS ROW BENEATH GOODS TABLE */}
             <tfoot>
               <tr className="bg-gray-100 font-mono font-bold text-[9.5px] border-t-2 border-gray-900 text-black">
-                <td colSpan={3} className="p-1.5 border-r border-gray-900 text-right uppercase">
+                <td colSpan={6} className="p-1.5 border-r border-gray-900 text-right uppercase">
                   Total Weight:
                 </td>
                 <td colSpan={2} className="p-1.5 border-r border-gray-900 text-center text-amber-900 font-bold">
                   {totals.totalWeightKg.toFixed(3)} KGS
                 </td>
-                <td colSpan={3} className="p-1.5 border-r border-gray-900 text-right uppercase text-[8.5px] text-gray-700">
-                  Gross Rate Avg: ₹{totals.grossRateAvg.toFixed(2)}/kg
+                <td colSpan={2} className="p-1.5 border-r border-gray-900 text-right uppercase text-[8.5px] text-gray-700">
+                  Subtotal:
                 </td>
-                <td className="p-1.5 border-r border-gray-900 text-right uppercase text-[9px]">Subtotal:</td>
                 <td className="p-1.5 text-right font-extrabold text-black">
                   {formatCurrency(totals.amountBeforeTax)}
                 </td>
@@ -359,6 +356,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
         </div>
       </div>
 
+      </div>
     </div>
   );
 };

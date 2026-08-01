@@ -128,6 +128,7 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
       weightGram: 0,
       denier: settings.denierOptions[0] || '150',
       shade: settings.shadeOptions[0]?.name || 'Natural White',
+      shadeNo: '',
       lotNo: 'LOT-101',
       grade: 'A',
       rate: 150,
@@ -358,7 +359,7 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
           </h3>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">Invoice Number</label>
             <input
@@ -386,16 +387,6 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
               value={invoice.invoiceDetails.challanNo}
               onChange={(e) => updateSubSection('invoiceDetails', 'challanNo', e.target.value)}
               className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">Agent Name</label>
-            <input
-              type="text"
-              value={invoice.invoiceDetails.agentName}
-              onChange={(e) => updateSubSection('invoiceDetails', 'agentName', e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] focus:border-[var(--accent-brass)] outline-none"
             />
           </div>
         </div>
@@ -733,72 +724,6 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Grade</label>
-                    <select
-                      value={item.grade}
-                      onChange={(e) => handleUpdateItem(index, 'grade', e.target.value as GradeType)}
-                      className="w-full px-3 py-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none cursor-pointer"
-                    >
-                      {settings.gradeOptions.map((g) => (
-                        <option key={g} value={g}>
-                          Grade {g}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Weight split: KG and Gram */}
-                  <div className="grid grid-cols-2 gap-1.5">
-                    <div>
-                      <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Weight (KG)</label>
-                      <input
-                        type="number"
-                        min="0"
-                        value={item.weightKg}
-                        onChange={(e) => handleUpdateItem(index, 'weightKg', Number(e.target.value))}
-                        className="w-full px-2 py-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Grams</label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="999"
-                        value={item.weightGram}
-                        onChange={(e) => handleUpdateItem(index, 'weightGram', Number(e.target.value))}
-                        className="w-full px-2 py-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Denier Dropdown with Custom Add Inline */}
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <label className="text-[11px] font-mono text-[var(--text-muted)]">Denier</label>
-                      <button
-                        type="button"
-                        onClick={() => setShowAddDenierModal(true)}
-                        className="text-[10px] text-[var(--accent-brass)] hover:underline flex items-center cursor-pointer"
-                      >
-                        <Plus className="w-3 h-3" />
-                        <span>Add</span>
-                      </button>
-                    </div>
-                    <select
-                      value={item.denier}
-                      onChange={(e) => handleUpdateItem(index, 'denier', e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none cursor-pointer"
-                    >
-                      {settings.denierOptions.map((d) => (
-                        <option key={d} value={d}>
-                          {d} Denier
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
                   {/* Shade Dropdown with Color Dot */}
                   <div>
                     <div className="flex items-center justify-between mb-1">
@@ -829,6 +754,84 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
                         ))}
                       </select>
                     </div>
+                  </div>
+
+                  {/* Shade Number */}
+                  <div>
+                    <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Shade No</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 101, SH-52"
+                      value={item.shadeNo || ''}
+                      onChange={(e) => handleUpdateItem(index, 'shadeNo', e.target.value)}
+                      className="w-full px-3 py-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
+                    />
+                  </div>
+
+                  {/* Denier Dropdown with Custom Add Inline */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-[11px] font-mono text-[var(--text-muted)]">Denier</label>
+                      <button
+                        type="button"
+                        onClick={() => setShowAddDenierModal(true)}
+                        className="text-[10px] text-[var(--accent-brass)] hover:underline flex items-center cursor-pointer"
+                      >
+                        <Plus className="w-3 h-3" />
+                        <span>Add</span>
+                      </button>
+                    </div>
+                    <select
+                      value={item.denier}
+                      onChange={(e) => handleUpdateItem(index, 'denier', e.target.value)}
+                      className="w-full px-3 py-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none cursor-pointer"
+                    >
+                      {settings.denierOptions.map((d) => (
+                        <option key={d} value={d}>
+                          {d} Denier
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Weight split: KG and Gram */}
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <div>
+                      <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Weight (KG)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={item.weightKg}
+                        onChange={(e) => handleUpdateItem(index, 'weightKg', Number(e.target.value))}
+                        className="w-full px-2 py-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Grams</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="999"
+                        value={item.weightGram}
+                        onChange={(e) => handleUpdateItem(index, 'weightGram', Number(e.target.value))}
+                        className="w-full px-2 py-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Grade</label>
+                    <select
+                      value={item.grade}
+                      onChange={(e) => handleUpdateItem(index, 'grade', e.target.value as GradeType)}
+                      className="w-full px-3 py-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none cursor-pointer"
+                    >
+                      {settings.gradeOptions.map((g) => (
+                        <option key={g} value={g}>
+                          Grade {g}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div>
