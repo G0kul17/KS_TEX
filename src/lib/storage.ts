@@ -90,6 +90,7 @@ const INITIAL_SEED_INVOICES: Invoice[] = [
       gstin: '24AAACV8891E1Z3',
     },
     transportDetails: {
+      enabled: true,
       transporter: 'Mahavir Surface Logistics',
       transportGstin: '24AABCM9012J1Z5',
       vehicleNo: 'GJ-05-BX-4910',
@@ -180,6 +181,7 @@ const INITIAL_SEED_INVOICES: Invoice[] = [
       gstin: '27AABCL4410K1Z8',
     },
     transportDetails: {
+      enabled: true,
       transporter: 'V-Trans India Ltd',
       transportGstin: '27AABCV1100F1Z2',
       vehicleNo: 'MH-04-ER-8812',
@@ -254,6 +256,7 @@ const INITIAL_SEED_INVOICES: Invoice[] = [
       gstin: '24AABCS7712M1ZP',
     },
     transportDetails: {
+      enabled: true,
       transporter: 'Surat Local Goods Transport',
       transportGstin: '24AAACS1111A1Z0',
       vehicleNo: 'GJ-05-AZ-1122',

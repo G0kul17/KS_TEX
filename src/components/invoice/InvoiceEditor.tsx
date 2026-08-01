@@ -66,10 +66,11 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
         gstin: '',
       },
       transportDetails: {
-        transporter: 'Mahavir Surface Logistics',
-        transportGstin: '24AABCM9012J1Z5',
-        vehicleNo: 'GJ-05-BX-4910',
-        lrNo: 'LR-10920',
+        enabled: false,
+        transporter: '',
+        transportGstin: '',
+        vehicleNo: '',
+        lrNo: '',
         lrDate: new Date().toISOString().split('T')[0],
       },
       items: [

@@ -14,7 +14,7 @@ export interface CompanyDetails {
   phone: string;
   email: string;
   gstin: string;
-  pan: string;
+  pan?: string;
   logoUrl?: string;
 }
 
@@ -24,7 +24,7 @@ export interface BuyerDetails {
   city: string;
   state: string;
   gstin: string;
-  pan: string;
+  pan?: string;
   phone: string;
 }
 
@@ -38,6 +38,7 @@ export interface DeliveryDetails {
 }
 
 export interface TransportDetails {
+  enabled?: boolean;
   transporter: string;
   transportGstin: string;
   vehicleNo: string;
@@ -50,13 +51,13 @@ export interface GoodsItem {
   srNo: number;
   description: string;
   hsn: string;
-  carton: number;
-  cheese: number;
+  carton?: number;
+  cheese?: number;
   weightKg: number;
   weightGram: number;
   denier: string;
   shade: string;
-  lotNo: string;
+  lotNo?: string;
   grade: GradeType;
   rate: number;
   amount: number;
@@ -81,8 +82,8 @@ export interface InvoiceDetails {
 }
 
 export interface InvoiceTotals {
-  totalCartons: number;
-  totalCheese: number;
+  totalCartons?: number;
+  totalCheese?: number;
   totalWeightKg: number;
   grossRateAvg: number;
   amountBeforeTax: number;

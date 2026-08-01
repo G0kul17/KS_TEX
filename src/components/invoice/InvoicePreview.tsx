@@ -25,6 +25,8 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
     }).format(amount || 0);
   };
 
+  const showTransport = transportDetails?.enabled === true;
+
   return (
     <div
       ref={previewRef}
@@ -153,59 +155,55 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
 
         </div>
 
-        {/* 5. TRANSPORT STRIP (5 Columns) */}
-        <div className="border-b border-gray-900 grid grid-cols-5 divide-x divide-gray-900 bg-gray-50/50 text-[10px]">
-          <div className="p-2">
-            <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold">Transporter</span>
-            <span className="font-medium truncate block">{transportDetails.transporter || '—'}</span>
+        {/* 5. OPTIONAL TRANSPORT STRIP (5 Columns) */}
+        {showTransport && (
+          <div className="border-b border-gray-900 grid grid-cols-5 divide-x divide-gray-900 bg-gray-50/50 text-[10px]">
+            <div className="p-2">
+              <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold">Transporter</span>
+              <span className="font-medium truncate block">{transportDetails?.transporter || '—'}</span>
+            </div>
+            <div className="p-2">
+              <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold">Transporter GSTIN</span>
+              <span className="font-mono font-medium">{transportDetails?.transportGstin || '—'}</span>
+            </div>
+            <div className="p-2">
+              <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold">Vehicle No</span>
+              <span className="font-mono font-semibold">{transportDetails?.vehicleNo || '—'}</span>
+            </div>
+            <div className="p-2">
+              <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold">L.R. No.</span>
+              <span className="font-mono font-semibold">{transportDetails?.lrNo || '—'}</span>
+            </div>
+            <div className="p-2">
+              <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold">L.R. Date</span>
+              <span className="font-mono font-medium">{transportDetails?.lrDate || '—'}</span>
+            </div>
           </div>
-          <div className="p-2">
-            <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold">Transporter GSTIN</span>
-            <span className="font-mono font-medium">{transportDetails.transportGstin || '—'}</span>
-          </div>
-          <div className="p-2">
-            <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold">Vehicle No</span>
-            <span className="font-mono font-semibold">{transportDetails.vehicleNo || '—'}</span>
-          </div>
-          <div className="p-2">
-            <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold">L.R. No.</span>
-            <span className="font-mono font-semibold">{transportDetails.lrNo || '—'}</span>
-          </div>
-          <div className="p-2">
-            <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold">L.R. Date</span>
-            <span className="font-mono font-medium">{transportDetails.lrDate || '—'}</span>
-          </div>
-        </div>
+        )}
 
-        {/* 6. GOODS TABLE WITH PERFECT PROPORTIONS & ACCURATE GRID ALIGNMENT */}
+        {/* 6. GOODS TABLE WITH PROPORTIONS (No Carton, Cheese, Lot No) */}
         <div className="border-b border-gray-900 overflow-x-auto">
-          <table className="w-full text-left text-[9.5px] border-collapse table-fixed min-w-[680px]">
+          <table className="w-full text-left text-[9.5px] border-collapse table-fixed min-w-[620px]">
             <colgroup>
-              <col style={{ width: '4%' }} />
-              <col style={{ width: '22%' }} />
-              <col style={{ width: '6%' }} />
-              <col style={{ width: '5.5%' }} />
-              <col style={{ width: '5.5%' }} />
-              <col style={{ width: '7%' }} />
-              <col style={{ width: '5.5%' }} />
-              <col style={{ width: '6%' }} />
-              <col style={{ width: '8.5%' }} />
-              <col style={{ width: '6.5%' }} />
-              <col style={{ width: '4.5%' }} />
-              <col style={{ width: '8.5%' }} />
+              <col style={{ width: '5%' }} />
+              <col style={{ width: '32%' }} />
+              <col style={{ width: '8%' }} />
               <col style={{ width: '10%' }} />
+              <col style={{ width: '8%' }} />
+              <col style={{ width: '8%' }} />
+              <col style={{ width: '10%' }} />
+              <col style={{ width: '5%' }} />
+              <col style={{ width: '10%' }} />
+              <col style={{ width: '12%' }} />
             </colgroup>
             <thead>
               <tr className="bg-gray-100/90 text-gray-900 border-b border-gray-900 font-mono uppercase font-bold text-[8.5px]">
                 <th rowSpan={2} className="p-1 border-r border-gray-900 text-center align-middle">Sr</th>
                 <th rowSpan={2} className="p-1.5 border-r border-gray-900 text-left align-middle">Particulars / Yarn Description</th>
                 <th rowSpan={2} className="p-1 border-r border-gray-900 text-center align-middle">HSN</th>
-                <th rowSpan={2} className="p-1 border-r border-gray-900 text-center align-middle">Carton</th>
-                <th rowSpan={2} className="p-1 border-r border-gray-900 text-center align-middle">Cheese</th>
                 <th colSpan={2} className="p-1 border-r border-b border-gray-900 text-center">Weight</th>
                 <th rowSpan={2} className="p-1 border-r border-gray-900 text-center align-middle">Denier</th>
                 <th rowSpan={2} className="p-1 border-r border-gray-900 text-center align-middle">Shade</th>
-                <th rowSpan={2} className="p-1 border-r border-gray-900 text-center align-middle">Lot No</th>
                 <th rowSpan={2} className="p-1 border-r border-gray-900 text-center align-middle">Grd</th>
                 <th rowSpan={2} className="p-1 border-r border-gray-900 text-right align-middle">Rate/Kg</th>
                 <th rowSpan={2} className="p-1.5 text-right align-middle">Amount (₹)</th>
@@ -227,13 +225,10 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
                       {item.description || 'Yarn Item'}
                     </td>
                     <td className="p-1.5 border-r border-gray-900 text-center font-mono">{item.hsn || '5402'}</td>
-                    <td className="p-1.5 border-r border-gray-900 text-center font-mono">{item.carton || 0}</td>
-                    <td className="p-1.5 border-r border-gray-900 text-center font-mono">{item.cheese || 0}</td>
                     <td className="p-1.5 border-r border-gray-900 text-right font-mono font-semibold">{kgInt}</td>
                     <td className="p-1.5 border-r border-gray-900 text-right font-mono">{gramVal}</td>
                     <td className="p-1.5 border-r border-gray-900 text-center font-mono">{item.denier || '—'}</td>
                     <td className="p-1.5 border-r border-gray-900 text-center truncate">{item.shade || '—'}</td>
-                    <td className="p-1.5 border-r border-gray-900 text-center font-mono">{item.lotNo || '—'}</td>
                     <td className="p-1.5 border-r border-gray-900 text-center font-mono font-bold">{item.grade || 'A'}</td>
                     <td className="p-1.5 border-r border-gray-900 text-right font-mono">{formatCurrency(item.rate)}</td>
                     <td className="p-1.5 text-right font-mono font-bold">{formatCurrency(item.amount)}</td>
@@ -242,12 +237,9 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
               })}
 
               {/* Empty padding rows to preserve traditional invoice ledger height */}
-              {items.length < 4 &&
-                Array.from({ length: 4 - items.length }).map((_, i) => (
+              {items.length < 5 &&
+                Array.from({ length: 5 - items.length }).map((_, i) => (
                   <tr key={`empty_${i}`} className="h-6">
-                    <td className="p-1.5 border-r border-gray-900">&nbsp;</td>
-                    <td className="p-1.5 border-r border-gray-900">&nbsp;</td>
-                    <td className="p-1.5 border-r border-gray-900">&nbsp;</td>
                     <td className="p-1.5 border-r border-gray-900">&nbsp;</td>
                     <td className="p-1.5 border-r border-gray-900">&nbsp;</td>
                     <td className="p-1.5 border-r border-gray-900">&nbsp;</td>
@@ -266,14 +258,12 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
             <tfoot>
               <tr className="bg-gray-100 font-mono font-bold text-[9.5px] border-t-2 border-gray-900 text-black">
                 <td colSpan={3} className="p-1.5 border-r border-gray-900 text-right uppercase">
-                  Total Ledger Quantity:
+                  Total Weight:
                 </td>
-                <td className="p-1.5 border-r border-gray-900 text-center">{totals.totalCartons}</td>
-                <td className="p-1.5 border-r border-gray-900 text-center">{totals.totalCheese}</td>
                 <td colSpan={2} className="p-1.5 border-r border-gray-900 text-center text-amber-900 font-bold">
                   {totals.totalWeightKg.toFixed(3)} KGS
                 </td>
-                <td colSpan={4} className="p-1.5 border-r border-gray-900 text-right uppercase text-[8.5px] text-gray-700">
+                <td colSpan={3} className="p-1.5 border-r border-gray-900 text-right uppercase text-[8.5px] text-gray-700">
                   Gross Rate Avg: ₹{totals.grossRateAvg.toFixed(2)}/kg
                 </td>
                 <td className="p-1.5 border-r border-gray-900 text-right uppercase text-[9px]">Subtotal:</td>

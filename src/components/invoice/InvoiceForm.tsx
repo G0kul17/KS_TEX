@@ -318,16 +318,6 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
           </div>
 
           <div>
-            <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">PAN Number</label>
-            <input
-              type="text"
-              value={invoice.companyDetails.pan}
-              onChange={(e) => updateSubSection('companyDetails', 'pan', e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none uppercase"
-            />
-          </div>
-
-          <div>
             <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">Phone / Mobile</label>
             <input
               type="text"
@@ -556,64 +546,91 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
 
       {/* 4. TRANSPORT DETAILS CARD */}
       <div className="p-5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-solid)] shadow-[var(--shadow-warm)] space-y-4">
-        <div className="flex items-center space-x-2.5 border-b border-[var(--border-hairline)] pb-3">
-          <Truck className="w-4 h-4 text-[var(--accent-brass)]" />
-          <h3 className="font-serif-display font-semibold text-base text-[var(--text-primary)]">
-            4. Transport Details
-          </h3>
+        <div className="flex items-center justify-between border-b border-[var(--border-hairline)] pb-3">
+          <div className="flex items-center space-x-2.5">
+            <Truck className="w-4 h-4 text-[var(--accent-brass)]" />
+            <h3 className="font-serif-display font-semibold text-base text-[var(--text-primary)]">
+              4. Transport Details
+            </h3>
+          </div>
+
+          <label className="flex items-center space-x-2 cursor-pointer select-none bg-[var(--bg-base)] px-3 py-1.5 rounded-xl border border-[var(--border-solid)] hover:border-[var(--accent-brass)]/50 transition-colors">
+            <input
+              type="checkbox"
+              checked={invoice.transportDetails?.enabled ?? false}
+              onChange={(e) => updateSubSection('transportDetails', 'enabled', e.target.checked)}
+              className="rounded border-[var(--border-solid)] text-[var(--accent-brass)] focus:ring-0 cursor-pointer"
+            />
+            <span className="text-xs font-mono font-medium text-[var(--text-primary)]">
+              Add Transport Details
+            </span>
+          </label>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          <div>
-            <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Transporter</label>
-            <input
-              type="text"
-              value={invoice.transportDetails.transporter}
-              onChange={(e) => updateSubSection('transportDetails', 'transporter', e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] focus:border-[var(--accent-brass)] outline-none"
-            />
-          </div>
+        {invoice.transportDetails?.enabled ? (
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <div>
+              <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Transporter</label>
+              <input
+                type="text"
+                value={invoice.transportDetails.transporter}
+                onChange={(e) => updateSubSection('transportDetails', 'transporter', e.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] focus:border-[var(--accent-brass)] outline-none"
+              />
+            </div>
 
-          <div>
-            <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Transport GSTIN</label>
-            <input
-              type="text"
-              value={invoice.transportDetails.transportGstin}
-              onChange={(e) => updateSubSection('transportDetails', 'transportGstin', e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono uppercase focus:border-[var(--accent-brass)] outline-none"
-            />
-          </div>
+            <div>
+              <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Transport GSTIN</label>
+              <input
+                type="text"
+                value={invoice.transportDetails.transportGstin}
+                onChange={(e) => updateSubSection('transportDetails', 'transportGstin', e.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono uppercase focus:border-[var(--accent-brass)] outline-none"
+              />
+            </div>
 
-          <div>
-            <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Vehicle No</label>
-            <input
-              type="text"
-              value={invoice.transportDetails.vehicleNo}
-              onChange={(e) => updateSubSection('transportDetails', 'vehicleNo', e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono uppercase focus:border-[var(--accent-brass)] outline-none"
-            />
-          </div>
+            <div>
+              <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Vehicle No</label>
+              <input
+                type="text"
+                value={invoice.transportDetails.vehicleNo}
+                onChange={(e) => updateSubSection('transportDetails', 'vehicleNo', e.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono uppercase focus:border-[var(--accent-brass)] outline-none"
+              />
+            </div>
 
-          <div>
-            <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">LR Number</label>
-            <input
-              type="text"
-              value={invoice.transportDetails.lrNo}
-              onChange={(e) => updateSubSection('transportDetails', 'lrNo', e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
-            />
-          </div>
+            <div>
+              <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">LR Number</label>
+              <input
+                type="text"
+                value={invoice.transportDetails.lrNo}
+                onChange={(e) => updateSubSection('transportDetails', 'lrNo', e.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
+              />
+            </div>
 
-          <div>
-            <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">LR Date</label>
-            <input
-              type="date"
-              value={invoice.transportDetails.lrDate}
-              onChange={(e) => updateSubSection('transportDetails', 'lrDate', e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
-            />
+            <div>
+              <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">LR Date</label>
+              <input
+                type="date"
+                value={invoice.transportDetails.lrDate}
+                onChange={(e) => updateSubSection('transportDetails', 'lrDate', e.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="p-3.5 rounded-xl bg-[var(--bg-base)] border border-[var(--border-hairline)] text-xs text-[var(--text-muted)] flex flex-wrap items-center justify-between gap-2">
+            <span>Transport details are hidden from this invoice. Click <strong>"Add Transport Details"</strong> if transport info is needed.</span>
+            <button
+              type="button"
+              onClick={() => updateSubSection('transportDetails', 'enabled', true)}
+              className="text-[11px] font-mono text-[var(--accent-brass)] hover:underline cursor-pointer font-semibold"
+            >
+              + Add Transport Details
+            </button>
+          </div>
+        )}
       </div>
 
       {/* 5. GOODS TABLE CARD */}
@@ -731,28 +748,6 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
                     </select>
                   </div>
 
-                  <div>
-                    <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Cartons</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={item.carton}
-                      onChange={(e) => handleUpdateItem(index, 'carton', Number(e.target.value))}
-                      className="w-full px-3 py-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Cheese (Packages)</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={item.cheese}
-                      onChange={(e) => handleUpdateItem(index, 'cheese', Number(e.target.value))}
-                      className="w-full px-3 py-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
-                    />
-                  </div>
-
                   {/* Weight split: KG and Gram */}
                   <div className="grid grid-cols-2 gap-1.5">
                     <div>
@@ -837,16 +832,6 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Lot Number</label>
-                    <input
-                      type="text"
-                      value={item.lotNo}
-                      onChange={(e) => handleUpdateItem(index, 'lotNo', e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
-                    />
-                  </div>
-
-                  <div>
                     <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-1">Rate per KG (₹)</label>
                     <input
                       type="number"
@@ -885,15 +870,7 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
         </div>
 
         {/* Quantity Summary Pills */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-3 rounded-xl bg-[var(--bg-base)] border border-[var(--border-hairline)]">
-            <span className="text-[10px] font-mono uppercase text-[var(--text-muted)] block">Total Cartons</span>
-            <span className="font-mono font-bold text-lg text-[var(--text-primary)]">{invoice.totals.totalCartons}</span>
-          </div>
-          <div className="p-3 rounded-xl bg-[var(--bg-base)] border border-[var(--border-hairline)]">
-            <span className="text-[10px] font-mono uppercase text-[var(--text-muted)] block">Total Cheese</span>
-            <span className="font-mono font-bold text-lg text-[var(--text-primary)]">{invoice.totals.totalCheese}</span>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="p-3 rounded-xl bg-[var(--bg-base)] border border-[var(--border-hairline)]">
             <span className="text-[10px] font-mono uppercase text-[var(--text-muted)] block">Total Weight</span>
             <span className="font-mono font-bold text-lg text-[var(--accent-brass)]">{invoice.totals.totalWeightKg.toFixed(3)} KGS</span>

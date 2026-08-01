@@ -1,6 +1,25 @@
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
+// Helper canvas context to normalize modern CSS colors (like oklch) to standard rgb/hex
+const dummyCanvas = typeof document !== 'undefined' ? document.createElement('canvas') : null;
+const ctx = dummyCanvas ? dummyCanvas.getContext('2d') : null;
+
+function convertOklchToRgb(cssText: string): string {
+  if (!cssText || !cssText.includes('oklch')) return cssText;
+  return cssText.replace(/oklch\([^)]+\)/gi, (match) => {
+    if (!ctx) return 'rgb(0,0,0)';
+    try {
+      ctx.fillStyle = '#000000';
+      ctx.fillStyle = match;
+      const converted = ctx.fillStyle;
+      return converted || 'rgb(0,0,0)';
+    } catch {
+      return 'rgb(0,0,0)';
+    }
+  });
+}
+
 /**
  * Capture the invoice preview element and export to pixel-faithful A4 PDF.
  */
@@ -16,6 +35,24 @@ export async function generateInvoicePdf(
       logging: false,
       backgroundColor: '#ffffff', // Always crisp light paper for official invoices
       windowWidth: 1200,
+      onclone: (clonedDoc) => {
+        // Convert any oklch color references in <style> tags to standard rgb/hex
+        const styleElements = clonedDoc.querySelectorAll('style');
+        styleElements.forEach((styleTag) => {
+          if (styleTag.textContent && styleTag.textContent.includes('oklch')) {
+            styleTag.textContent = convertOklchToRgb(styleTag.textContent);
+          }
+        });
+
+        // Convert inline styles with oklch if any
+        const allElements = clonedDoc.querySelectorAll('*');
+        allElements.forEach((node) => {
+          const el = node as HTMLElement;
+          if (el.style && el.style.cssText && el.style.cssText.includes('oklch')) {
+            el.style.cssText = convertOklchToRgb(el.style.cssText);
+          }
+        });
+      },
     });
 
     const imgData = canvas.toDataURL('image/png');

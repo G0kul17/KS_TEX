@@ -26,14 +26,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isOpenMobile = false,
   onCloseMobile,
 }) => {
-  const navItems = [
+  interface NavItem {
+    id: ActiveTab;
+    label: string;
+    icon: React.ElementType;
+    badge?: number;
+  }
+
+  const navItems: NavItem[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'generate', label: 'Generate Invoice', icon: FilePlus },
     { id: 'history', label: 'Invoice History', icon: History },
     { id: 'drafts', label: 'Draft Bills', icon: FileClock, badge: draftCount },
     { id: 'customers', label: 'Customers', icon: Users },
     { id: 'settings', label: 'Settings', icon: SettingsIcon },
-  ] as const;
+  ];
 
   const content = (
     <aside className="w-64 bg-[var(--bg-surface)] border-r border-[var(--border-solid)] flex flex-col justify-between h-full py-6 px-3">
