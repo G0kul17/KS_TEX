@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { AppSettings, ShadeOption } from '../../types';
-import { resetInvoiceCounter } from '../../lib/storage';
+import { resetInvoiceCounter, BRAND_LOGO_DEFAULT } from '../../lib/storage';
 import { 
   Building2, 
   Landmark, 
@@ -15,7 +15,9 @@ import {
   Save, 
   Check, 
   Sparkles,
-  Hash
+  Hash,
+  Upload,
+  Image as ImageIcon
 } from 'lucide-react';
 
 export const SettingsPage: React.FC = () => {
@@ -42,6 +44,17 @@ export const SettingsPage: React.FC = () => {
         [field]: val,
       },
     });
+  };
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result as string;
+      handleUpdateCompany('logoUrl', base64);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleUpdateBank = (field: string, val: string) => {
@@ -352,11 +365,56 @@ export const SettingsPage: React.FC = () => {
           <div className="flex items-center space-x-2.5 border-b border-[var(--border-hairline)] pb-3">
             <Building2 className="w-4 h-4 text-[var(--accent-brass)]" />
             <h3 className="font-serif-display font-semibold text-base text-[var(--text-primary)]">
-              Default Company Profile
+              Default Company Profile & Permanent Brand Mark
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {/* Logo Mark Control Box */}
+          <div className="p-4 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-16 h-16 rounded-full border border-[var(--accent-brass)]/50 overflow-hidden bg-black shrink-0 flex items-center justify-center shadow-md">
+                <img
+                  src={formSettings.defaultCompanyDetails.logoUrl || BRAND_LOGO_DEFAULT}
+                  alt="KS TEX Brand Mark"
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+              <div className="space-y-0.5">
+                <div className="text-xs font-serif-display font-bold text-[var(--text-primary)]">
+                  Permanent Brand Logo Mark
+                </div>
+                <div className="text-[11px] text-[var(--text-muted)] max-w-md">
+                  This official KS emblem appears automatically on all created invoices, PDFs, and header bars. If changed by admin, the new logo becomes permanently fixed.
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2 shrink-0">
+              <label className="px-3 py-1.5 rounded-lg bg-[var(--accent-brass)] text-[#15130f] text-xs font-bold hover:bg-[#d4b068] transition-colors cursor-pointer flex items-center space-x-1.5 shadow-sm">
+                <Upload className="w-3.5 h-3.5" />
+                <span>Upload New Logo</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoUpload}
+                  className="hidden"
+                />
+              </label>
+
+              {formSettings.defaultCompanyDetails.logoUrl !== BRAND_LOGO_DEFAULT && (
+                <button
+                  type="button"
+                  onClick={() => handleUpdateCompany('logoUrl', BRAND_LOGO_DEFAULT)}
+                  className="px-3 py-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-solid)] text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+                >
+                  Reset Default
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
             <div>
               <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">Company Name</label>
               <input

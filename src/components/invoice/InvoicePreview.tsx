@@ -1,5 +1,6 @@
 import React from 'react';
 import { Invoice } from '../../types';
+import { BRAND_LOGO_DEFAULT } from '../../lib/storage';
 
 interface InvoicePreviewProps {
   invoice: Invoice;
@@ -17,6 +18,8 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
     totals,
     bankDetails,
   } = invoice;
+
+  const displayLogo = companyDetails.logoUrl || BRAND_LOGO_DEFAULT;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -57,21 +60,13 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
         {/* 2. HEADER BLOCK */}
         <div className="border-b border-gray-900 p-4 text-center relative bg-white">
           {/* Logo Mark Top-Left */}
-          <div className="absolute top-3.5 left-4 w-14 h-14 rounded-full border border-amber-600/40 flex items-center justify-center bg-amber-50/40 overflow-hidden">
-            {companyDetails.logoUrl ? (
-              <img
-                src={companyDetails.logoUrl}
-                alt="Logo"
-                className="w-full h-full object-contain"
-              />
-            ) : (
-              <div className="text-center">
-                <span className="font-serif font-bold text-amber-800 text-xs tracking-wider block">
-                  KST
-                </span>
-                <span className="text-[8px] text-amber-900 block font-mono">SILK</span>
-              </div>
-            )}
+          <div className="absolute top-3.5 left-4 w-14 h-14 rounded-full border border-amber-600/40 flex items-center justify-center bg-black overflow-hidden shadow-sm">
+            <img
+              src={displayLogo}
+              alt="KS TEX Logo"
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
           </div>
 
           {/* Header Titles */}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTheme } from '../../context/ThemeContext';
-import { Sun, Moon, Layers, ShieldCheck, Menu } from 'lucide-react';
+import { Sun, Moon, ShieldCheck, Menu } from 'lucide-react';
+import { BRAND_LOGO_DEFAULT } from '../../lib/storage';
 
 interface NavbarProps {
   onToggleMobileMenu?: () => void;
@@ -8,6 +9,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileMenu }) => {
   const { settings, toggleTheme } = useTheme();
+  const logoUrl = settings.defaultCompanyDetails?.logoUrl || BRAND_LOGO_DEFAULT;
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'short',
     year: 'numeric',
@@ -21,7 +23,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileMenu }) => {
     <header className="sticky top-0 z-30 w-full backdrop-blur-md bg-[var(--bg-base)]/90 border-b border-[var(--border-solid)] px-4 lg:px-8 py-3 transition-colors duration-300">
       <div className="flex items-center justify-between max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1720px] mx-auto">
         
-        {/* Left: Mobile Menu Toggle & Brand Wordmark */}
+        {/* Left: Mobile Menu Toggle & Brand Wordmark with Logo Mark */}
         <div className="flex items-center space-x-3">
           <button
             type="button"
@@ -33,8 +35,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileMenu }) => {
           </button>
 
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[var(--accent-brass)]/15 border border-[var(--accent-brass)]/30 flex items-center justify-center text-[var(--accent-brass)] shadow-xs">
-              <Layers className="w-4 h-4" />
+            <div className="w-9 h-9 rounded-full border border-[var(--accent-brass)]/40 overflow-hidden bg-black flex items-center justify-center shrink-0 shadow-sm">
+              <img
+                src={logoUrl}
+                alt="KS TEX Brand Mark"
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
             </div>
             <div>
               <span className="font-serif-display font-bold text-xl tracking-wide text-[var(--text-primary)]">

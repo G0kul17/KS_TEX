@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Invoice, GoodsItem, GstType, GradeType } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { numberToWordsIndian } from '../../lib/numberToWords';
+import { BRAND_LOGO_DEFAULT } from '../../lib/storage';
 import { 
   Building2, 
   FileText, 
@@ -268,16 +269,13 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
 
         {/* Logo Drag/Drop Upload Area */}
         <div className="flex items-center space-x-4">
-          <div className="relative w-16 h-16 rounded-xl border-2 border-dashed border-[var(--border-solid)] bg-[var(--bg-surface-hover)] flex items-center justify-center overflow-hidden shrink-0 group">
-            {invoice.companyDetails.logoUrl ? (
-              <img
-                src={invoice.companyDetails.logoUrl}
-                alt="Company Logo"
-                className="w-full h-full object-contain p-1"
-              />
-            ) : (
-              <Upload className="w-5 h-5 text-[var(--text-muted)] group-hover:text-[var(--accent-brass)] transition-colors" />
-            )}
+          <div className="relative w-16 h-16 rounded-full border-2 border-[var(--border-solid)] bg-black flex items-center justify-center overflow-hidden shrink-0 group shadow-sm">
+            <img
+              src={invoice.companyDetails.logoUrl || settings.defaultCompanyDetails.logoUrl || BRAND_LOGO_DEFAULT}
+              alt="Company Logo"
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
             <input
               type="file"
               accept="image/*"

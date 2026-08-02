@@ -1,5 +1,8 @@
 import { AppSettings, Customer, Invoice } from '../types';
 import { numberToWordsIndian } from './numberToWords';
+import ksLogoMark from '../assets/images/ks_logo_mark_1785667570392.jpg';
+
+export const BRAND_LOGO_DEFAULT = ksLogoMark;
 
 const SETTINGS_KEY = 'kstex_settings_v1';
 const INVOICES_KEY = 'kstex_invoices_v1';
@@ -22,7 +25,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
     email: 'karthimani1978@gmail.com',
     gstin: '33EXDPM4349N1Z1',
     pan: 'EXDPM4349N',
-    logoUrl: '',
+    logoUrl: ksLogoMark,
   },
   defaultBankDetails: {
     bankName: 'INDIAN BANK',
@@ -332,6 +335,9 @@ export function getStoredSettings(): AppSettings {
         parsed.defaultCompanyDetails?.invocationLine === '|| Shree Ganeshay Namah ||'
       ) {
         companyDetails = DEFAULT_SETTINGS.defaultCompanyDetails;
+      }
+      if (!companyDetails.logoUrl) {
+        companyDetails.logoUrl = ksLogoMark;
       }
 
       let bankDetails = { ...DEFAULT_SETTINGS.defaultBankDetails, ...parsed.defaultBankDetails };
