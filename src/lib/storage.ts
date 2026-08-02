@@ -25,14 +25,14 @@ export const DEFAULT_SETTINGS: AppSettings = {
     logoUrl: '',
   },
   defaultBankDetails: {
-    bankName: 'HDFC Bank Ltd.',
-    accountNo: '50200049281042',
-    ifscCode: 'HDFC0000241',
-    branchName: 'Ring Road Branch, Surat',
+    bankName: 'INDIAN BANK',
+    accountNo: '8284710994',
+    ifscCode: 'IDIB000G052',
+    branchName: 'GUGAI BRANCH, SALEM - 6',
   },
   defaultTerms: `1. Goods once sold will not be taken back or exchanged.
 2. Interest @ 18% p.a. will be charged on delayed payments after 30 days.
-3. All disputes are subject to Surat Jurisdiction only.
+3. All disputes are subject to Salem Jurisdiction only.
 4. E. & O. E.`,
   denierOptions: ['100', '50', '75', '120', '150', '200', '300'],
   shadeOptions: [
@@ -334,7 +334,12 @@ export function getStoredSettings(): AppSettings {
         companyDetails = DEFAULT_SETTINGS.defaultCompanyDetails;
       }
 
-      return { ...DEFAULT_SETTINGS, ...parsed, defaultCompanyDetails: companyDetails, shadeOptions };
+      let bankDetails = { ...DEFAULT_SETTINGS.defaultBankDetails, ...parsed.defaultBankDetails };
+      if (!parsed.defaultBankDetails?.accountNo || parsed.defaultBankDetails?.accountNo === '50200049281042') {
+        bankDetails = DEFAULT_SETTINGS.defaultBankDetails;
+      }
+
+      return { ...DEFAULT_SETTINGS, ...parsed, defaultCompanyDetails: companyDetails, defaultBankDetails: bankDetails, shadeOptions };
     }
   } catch (e) {
     console.error('Failed to load settings from storage', e);
@@ -352,6 +357,11 @@ export function saveStoredSettings(settings: AppSettings): void {
 
 export function getStoredInvoices(): Invoice[] {
   try {
+    if (!localStorage.getItem('kstex_reset_inv_no_v12')) {
+      localStorage.setItem('kstex_reset_inv_no_v12', 'true');
+      localStorage.setItem(INVOICES_KEY, JSON.stringify([]));
+      return [];
+    }
     const raw = localStorage.getItem(INVOICES_KEY);
     if (raw) {
       const parsed: Invoice[] = JSON.parse(raw);
@@ -363,6 +373,9 @@ export function getStoredInvoices(): Invoice[] {
           updated.companyDetails.email === 'contact@kstex.in'
         ) {
           updated.companyDetails = DEFAULT_SETTINGS.defaultCompanyDetails;
+        }
+        if (!updated.bankDetails?.accountNo || updated.bankDetails?.accountNo === '50200049281042') {
+          updated.bankDetails = DEFAULT_SETTINGS.defaultBankDetails;
         }
         if (updated.buyerDetails && (!updated.buyerDetails.state || updated.buyerDetails.state === 'Gujarat')) {
           updated.buyerDetails = { ...updated.buyerDetails, state: 'Tamil Nadu' };
@@ -380,11 +393,19 @@ export function getStoredInvoices(): Invoice[] {
       });
     }
     // Seed initial invoices if storage is empty
-    localStorage.setItem(INVOICES_KEY, JSON.stringify(INITIAL_SEED_INVOICES));
-    return INITIAL_SEED_INVOICES;
+    localStorage.setItem(INVOICES_KEY, JSON.stringify([]));
+    return [];
   } catch (e) {
     console.error('Failed to load invoices from storage', e);
-    return INITIAL_SEED_INVOICES;
+    return [];
+  }
+}
+
+export function resetInvoiceCounter(): void {
+  try {
+    localStorage.setItem(INVOICES_KEY, JSON.stringify([]));
+  } catch (e) {
+    console.error('Failed to reset invoice counter', e);
   }
 }
 

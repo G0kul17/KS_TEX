@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { AppSettings, ShadeOption } from '../../types';
+import { resetInvoiceCounter } from '../../lib/storage';
 import { 
   Building2, 
   Landmark, 
@@ -13,7 +14,8 @@ import {
   RotateCcw, 
   Save, 
   Check, 
-  Sparkles 
+  Sparkles,
+  Hash
 } from 'lucide-react';
 
 export const SettingsPage: React.FC = () => {
@@ -208,6 +210,24 @@ export const SettingsPage: React.FC = () => {
                 <option value="INTER_STATE">Inter-State (IGST)</option>
               </select>
             </div>
+          </div>
+
+          <div className="pt-2 border-t border-[var(--border-hairline)] flex items-center justify-between">
+            <span className="text-xs text-[var(--text-muted)] font-sans">
+              Invoice Counter: Starts at <code className="font-mono text-[var(--text-primary)] font-semibold">{formSettings.invoicePrefix || 'FY'}001</code>
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                resetInvoiceCounter();
+                setShowSavedToast(true);
+                setTimeout(() => setShowSavedToast(false), 2500);
+              }}
+              className="px-3 py-1.5 rounded-lg bg-[var(--bg-base)] border border-[var(--border-solid)] text-xs font-mono font-medium text-[var(--text-primary)] hover:border-[var(--accent-brass)] hover:text-[var(--accent-brass)] transition-colors flex items-center gap-1.5"
+            >
+              <Hash className="w-3.5 h-3.5" />
+              <span>Reset Counter to 1</span>
+            </button>
           </div>
         </div>
 

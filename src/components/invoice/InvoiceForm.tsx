@@ -124,17 +124,17 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
       srNo: invoice.items.length + 1,
       description: '100 Soft Silk Yarn',
       hsn: '54033100',
-      carton: 1,
-      cheese: 24,
-      weightKg: 20,
+      carton: 0,
+      cheese: 0,
+      weightKg: 0,
       weightGram: 0,
       denier: settings.denierOptions[0] || '100',
       shade: defaultShade?.name || 'CORAL PINK',
       shadeNo: defaultShade?.shadeNo || 'A958',
       lotNo: 'LOT-101',
       grade: 'A',
-      rate: 150,
-      amount: 3000,
+      rate: 0,
+      amount: 0,
     };
     const updated = { ...invoice, items: [...invoice.items, newItem] };
     recalculateTotals(updated);

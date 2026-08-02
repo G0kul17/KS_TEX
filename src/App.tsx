@@ -13,7 +13,8 @@ import {
   deleteInvoice, 
   getCustomersFromInvoices, 
   saveInvoice, 
-  getNextInvoiceNumber 
+  getNextInvoiceNumber,
+  getStoredSettings
 } from './lib/storage';
 import { Invoice, Customer } from './types';
 import { generateInvoicePdf } from './lib/pdf';
@@ -98,18 +99,42 @@ export function AppContent() {
   };
 
   const handleCreateInvoiceForCustomer = (customer: Customer) => {
-    const blank = getStoredInvoices()[0]; // template reference
-    const nextNo = getNextInvoiceNumber('FY');
+    const settings = getStoredSettings();
+    const nextNo = getNextInvoiceNumber(settings.invoicePrefix || 'FY');
+    const defaultItem = {
+      id: `item_${Date.now()}`,
+      srNo: 1,
+      description: '100 Soft Silk Yarn',
+      hsn: '54033100',
+      carton: 0,
+      cheese: 0,
+      weightKg: 0,
+      weightGram: 0,
+      denier: settings.denierOptions[0] || '100',
+      shade: settings.shadeOptions[0]?.name || 'CORAL PINK',
+      shadeNo: settings.shadeOptions[0]?.shadeNo || 'A958',
+      lotNo: 'LOT-A10',
+      grade: 'A' as const,
+      rate: 0,
+      amount: 0,
+    };
     const newInvoice: Invoice = {
-      ...blank,
       id: `inv_${Date.now()}`,
       status: 'draft',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      companyDetails: { ...settings.defaultCompanyDetails },
+      bankDetails: { ...settings.defaultBankDetails },
+      termsConditions: settings.defaultTerms,
       invoiceDetails: {
-        ...blank.invoiceDetails,
         invoiceNo: nextNo,
         invoiceDate: new Date().toISOString().split('T')[0],
+        challanNo: '',
+        agentName: 'Ramesh Shah & Sons',
+        gstType: settings.defaultGstType || 'INTRA_STATE',
+        cgstPercent: settings.defaultCgstPercent || 2.5,
+        sgstPercent: settings.defaultSgstPercent || 2.5,
+        igstPercent: settings.defaultIgstPercent || 5.0,
       },
       buyerDetails: {
         companyName: customer.companyName,
@@ -127,6 +152,28 @@ export function AppContent() {
         city: 'Salem',
         state: customer.state || 'Tamil Nadu',
         gstin: customer.gstin,
+      },
+      transportDetails: {
+        enabled: true,
+        transporter: '',
+        transportGstin: '',
+        vehicleNo: '',
+        lrNo: '',
+        lrDate: new Date().toISOString().split('T')[0],
+      },
+      items: [defaultItem],
+      totals: {
+        totalCartons: 0,
+        totalCheese: 0,
+        totalWeightKg: 0,
+        grossRateAvg: 0,
+        amountBeforeTax: 0,
+        cgstAmount: 0,
+        sgstAmount: 0,
+        igstAmount: 0,
+        totalTaxAmount: 0,
+        amountAfterTax: 0,
+        amountInWords: 'Rupees Zero Only',
       },
     };
     setSelectedInvoiceForEdit(newInvoice);

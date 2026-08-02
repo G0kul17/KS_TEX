@@ -288,10 +288,10 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
               Bank Details for RTGS / NEFT
             </div>
             <div className="text-[10px] space-y-0.5 text-gray-800 pt-0.5">
-              <div><span className="font-mono text-gray-500">Bank:</span> <span className="font-semibold">{bankDetails.bankName || 'HDFC Bank Ltd'}</span></div>
-              <div><span className="font-mono text-gray-500">Account No:</span> <span className="font-mono font-bold text-black">{bankDetails.accountNo || '—'}</span></div>
-              <div><span className="font-mono text-gray-500">IFSC Code:</span> <span className="font-mono font-bold text-amber-900">{bankDetails.ifscCode || '—'}</span></div>
-              <div><span className="font-mono text-gray-500">Branch:</span> <span>{bankDetails.branchName || 'Surat'}</span></div>
+              <div><span className="font-mono text-gray-500">Bank:</span> <span className="font-semibold">{bankDetails.bankName || 'INDIAN BANK'}</span></div>
+              <div><span className="font-mono text-gray-500">Account No:</span> <span className="font-mono font-bold text-black">{bankDetails.accountNo || '8284710994'}</span></div>
+              <div><span className="font-mono text-gray-500">IFSC Code:</span> <span className="font-mono font-bold text-amber-900">{bankDetails.ifscCode || 'IDIB000G052'}</span></div>
+              <div><span className="font-mono text-gray-500">Branch:</span> <span>{bankDetails.branchName || 'GUGAI BRANCH, SALEM - 6'}</span></div>
             </div>
           </div>
 
