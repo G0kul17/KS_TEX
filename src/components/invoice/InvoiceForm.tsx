@@ -35,6 +35,7 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
   const [showAddDenierModal, setShowAddDenierModal] = useState(false);
 
   const [newShadeName, setNewShadeName] = useState('');
+  const [newShadeNo, setNewShadeNo] = useState('');
   const [newShadeColor, setNewShadeColor] = useState('#C6A15B');
   const [showAddShadeModal, setShowAddShadeModal] = useState(false);
 
@@ -117,18 +118,19 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
 
   // Goods item row operations
   const handleAddItem = () => {
+    const defaultShade = settings.shadeOptions[0];
     const newItem: GoodsItem = {
       id: `item_${Date.now()}`,
       srNo: invoice.items.length + 1,
-      description: 'Polyester Silk Yarn',
-      hsn: '5402',
+      description: '100 Soft Silk Yarn',
+      hsn: '54033100',
       carton: 1,
       cheese: 24,
       weightKg: 20,
       weightGram: 0,
-      denier: settings.denierOptions[0] || '150',
-      shade: settings.shadeOptions[0]?.name || 'Natural White',
-      shadeNo: '',
+      denier: settings.denierOptions[0] || '100',
+      shade: defaultShade?.name || 'CORAL PINK',
+      shadeNo: defaultShade?.shadeNo || 'A958',
       lotNo: 'LOT-101',
       grade: 'A',
       rate: 150,
@@ -141,6 +143,17 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
   const handleUpdateItem = (index: number, field: keyof GoodsItem, value: any) => {
     const updatedItems = [...invoice.items];
     updatedItems[index] = { ...updatedItems[index], [field]: value };
+
+    if (field === 'shade') {
+      const matchedShade = settings.shadeOptions.find(
+        (s) => s.name.toLowerCase() === String(value).toLowerCase() ||
+               `${s.name}|||${s.shadeNo}` === String(value)
+      );
+      if (matchedShade && matchedShade.shadeNo) {
+        updatedItems[index].shadeNo = matchedShade.shadeNo;
+      }
+    }
+
     const updated = { ...invoice, items: updatedItems };
     recalculateTotals(updated);
   };
@@ -189,12 +202,18 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
 
   const handleAddCustomShade = () => {
     if (!newShadeName.trim()) return;
-    const exists = settings.shadeOptions.some((s) => s.name.toLowerCase() === newShadeName.trim().toLowerCase());
+    const exists = settings.shadeOptions.some(
+      (s) => s.name.toLowerCase() === newShadeName.trim().toLowerCase() && s.shadeNo === newShadeNo.trim()
+    );
     if (!exists) {
-      const updatedShades = [...settings.shadeOptions, { name: newShadeName.trim(), hexColor: newShadeColor }];
+      const updatedShades = [
+        ...settings.shadeOptions, 
+        { name: newShadeName.trim(), shadeNo: newShadeNo.trim() || undefined, hexColor: newShadeColor }
+      ];
       updateSettings({ ...settings, shadeOptions: updatedShades });
     }
     setNewShadeName('');
+    setNewShadeNo('');
     setShowAddShadeModal(false);
   };
 
@@ -648,7 +667,9 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
         <div className="space-y-4 overflow-x-auto pb-2">
           {invoice.items.map((item, index) => {
             const itemKgCombined = (Number(item.weightKg) || 0) + (Number(item.weightGram) || 0) / 1000;
-            const currentShadeObj = settings.shadeOptions.find((s) => s.name === item.shade);
+            const currentShadeObj = settings.shadeOptions.find(
+              (s) => s.name === item.shade && (!s.shadeNo || s.shadeNo === item.shadeNo)
+            ) || settings.shadeOptions.find((s) => s.name === item.shade);
 
             return (
               <div
@@ -743,15 +764,29 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
                         style={{ backgroundColor: currentShadeObj?.hexColor || '#ffffff' }}
                       />
                       <select
-                        value={item.shade}
-                        onChange={(e) => handleUpdateItem(index, 'shade', e.target.value)}
+                        value={item.shadeNo ? `${item.shade}|||${item.shadeNo}` : item.shade}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val.includes('|||')) {
+                            const [sName, sNo] = val.split('|||');
+                            const updatedItems = [...invoice.items];
+                            updatedItems[index] = { ...updatedItems[index], shade: sName, shadeNo: sNo };
+                            recalculateTotals({ ...invoice, items: updatedItems });
+                          } else {
+                            handleUpdateItem(index, 'shade', val);
+                          }
+                        }}
                         className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-solid)] text-[var(--text-primary)] focus:border-[var(--accent-brass)] outline-none cursor-pointer"
                       >
-                        {settings.shadeOptions.map((s) => (
-                          <option key={s.name} value={s.name}>
-                            {s.name}
-                          </option>
-                        ))}
+                        {settings.shadeOptions.map((s, idx) => {
+                          const optionVal = s.shadeNo ? `${s.name}|||${s.shadeNo}` : s.name;
+                          const displayLabel = s.shadeNo ? `${s.name} (${s.shadeNo})` : s.name;
+                          return (
+                            <option key={`${s.name}-${s.shadeNo || idx}`} value={optionVal}>
+                              {displayLabel}
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
                   </div>
@@ -899,7 +934,7 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
             >
               <div>
                 <div className="font-semibold text-xs text-[var(--text-primary)]">CGST + SGST (Intra-State)</div>
-                <div className="text-[10px] font-mono mt-0.5">Gujarat Sales</div>
+                <div className="text-[10px] font-mono mt-0.5">Tamil Nadu Sales</div>
               </div>
               {invoice.invoiceDetails.gstType === 'INTRA_STATE' && <CheckCircle2 className="w-4 h-4 text-[var(--accent-brass)]" />}
             </button>
@@ -1063,14 +1098,16 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
             />
             <div className="flex justify-end space-x-2">
               <button
+                type="button"
                 onClick={() => setShowAddDenierModal(false)}
-                className="px-4 py-2 rounded-xl text-xs text-[var(--text-muted)] hover:bg-[var(--bg-surface-hover)] cursor-pointer"
+                className="px-4 py-2 rounded-xl text-xs text-[var(--text-muted)] hover:bg-[var(--bg-surface-hover)] cursor-pointer min-h-[38px]"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={handleAddCustomDenier}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--accent-brass)] text-[#15130f] hover:bg-[#d4b068] cursor-pointer"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--accent-brass)] text-[#15130f] hover:bg-[#d4b068] cursor-pointer min-h-[38px]"
               >
                 Save Denier
               </button>
@@ -1089,10 +1126,20 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
                 <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">Color Name</label>
                 <input
                   type="text"
-                  placeholder="e.g. Olive Green"
+                  placeholder="e.g. CORAL PINK"
                   value={newShadeName}
                   onChange={(e) => setNewShadeName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] outline-none focus:border-[var(--accent-brass)]"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] outline-none focus:border-[var(--accent-brass)] text-xs"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">Shade No (Code)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. A958"
+                  value={newShadeNo}
+                  onChange={(e) => setNewShadeNo(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono outline-none focus:border-[var(--accent-brass)] text-xs uppercase"
                 />
               </div>
               <div>
@@ -1107,14 +1154,16 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
             </div>
             <div className="flex justify-end space-x-2">
               <button
+                type="button"
                 onClick={() => setShowAddShadeModal(false)}
-                className="px-4 py-2 rounded-xl text-xs text-[var(--text-muted)] hover:bg-[var(--bg-surface-hover)] cursor-pointer"
+                className="px-4 py-2 rounded-xl text-xs text-[var(--text-muted)] hover:bg-[var(--bg-surface-hover)] cursor-pointer min-h-[38px]"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={handleAddCustomShade}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--accent-brass)] text-[#15130f] hover:bg-[#d4b068] cursor-pointer"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--accent-brass)] text-[#15130f] hover:bg-[#d4b068] cursor-pointer min-h-[38px]"
               >
                 Save Shade
               </button>

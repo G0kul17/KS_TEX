@@ -44,13 +44,13 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
         {/* 1. TOP STRIP */}
         <div className="border-b border-gray-900 flex items-center justify-between px-3 py-1.5 bg-gray-50/60 text-[10.5px] font-mono">
           <div className="font-semibold text-gray-900">
-            GSTIN: <span className="font-bold">{companyDetails.gstin || '24AAFCK1234F1Z9'}</span>
+            GSTIN: <span className="font-bold">{companyDetails.gstin || '33EXDPM4349N1Z1'}</span>
           </div>
           <div className="font-serif italic font-medium text-gray-800">
-            {companyDetails.invocationLine || '|| Shree Ganeshay Namah ||'}
+            {companyDetails.invocationLine || '|| SRI MURUGAN THUNAI ||'}
           </div>
           <div className="text-gray-900">
-            Ph: <span className="font-semibold">{companyDetails.phone || '+91 98251 04291'}</span>
+            Ph: <span className="font-semibold">{companyDetails.phone || '9003449226'}</span>
           </div>
         </div>
 
@@ -130,7 +130,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
             <div className="text-gray-800 text-[10px]">{buyerDetails.address || '—'}</div>
             <div className="grid grid-cols-2 gap-2 text-[10px] pt-1">
               <div><span className="text-gray-500 font-mono">GSTIN:</span> <span className="font-mono font-semibold">{buyerDetails.gstin || '—'}</span></div>
-              <div><span className="text-gray-500 font-mono">State:</span> <span className="font-semibold">{buyerDetails.state || 'Gujarat'}</span></div>
+              <div><span className="text-gray-500 font-mono">State:</span> <span className="font-semibold">{buyerDetails.state || 'Tamil Nadu'}</span></div>
             </div>
           </div>
 
@@ -146,7 +146,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
             <div className="text-gray-800 text-[10px]">{deliveryDetails.address || buyerDetails.address || '—'}</div>
             <div className="grid grid-cols-2 gap-2 text-[10px] pt-1">
               <div><span className="text-gray-500 font-mono">GSTIN:</span> <span className="font-mono font-semibold">{deliveryDetails.gstin || buyerDetails.gstin || '—'}</span></div>
-              <div><span className="text-gray-500 font-mono">State:</span> <span className="font-semibold">{deliveryDetails.state || buyerDetails.state || 'Gujarat'}</span></div>
+              <div><span className="text-gray-500 font-mono">State:</span> <span className="font-semibold">{deliveryDetails.state || buyerDetails.state || 'Tamil Nadu'}</span></div>
             </div>
           </div>
 
@@ -180,55 +180,62 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
 
         {/* 6. GOODS TABLE WITH PROPORTIONS */}
         <div className="border-b border-gray-900 overflow-x-auto">
-          <table className="w-full text-left text-[9.5px] border-collapse table-fixed min-w-[620px]">
+          <table className="w-full text-left text-[9.5px] border-collapse table-fixed min-w-[640px]">
             <colgroup>
               <col style={{ width: '4%' }} />
-              <col style={{ width: '25%' }} />
-              <col style={{ width: '7%' }} />
+              <col style={{ width: '18%' }} />
+              <col style={{ width: '8%' }} />
+              <col style={{ width: '14%' }} />
+              <col style={{ width: '8%' }} />
+              <col style={{ width: '6%' }} />
               <col style={{ width: '9%' }} />
-              <col style={{ width: '8%' }} />
-              <col style={{ width: '7%' }} />
-              <col style={{ width: '8%' }} />
-              <col style={{ width: '7%' }} />
-              <col style={{ width: '5%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '4%' }} />
               <col style={{ width: '9%' }} />
               <col style={{ width: '11%' }} />
             </colgroup>
             <thead>
               <tr className="bg-gray-100 text-gray-900 border-b border-gray-900 font-mono uppercase font-bold text-[8.5px]">
-                <th className="p-1.5 border-r border-gray-900 text-center align-middle">Sr</th>
-                <th className="p-1.5 border-r border-gray-900 text-left align-middle">Particulars / Yarn Description</th>
-                <th className="p-1.5 border-r border-gray-900 text-center align-middle">HSN</th>
-                <th className="p-1.5 border-r border-gray-900 text-center align-middle">Shade</th>
-                <th className="p-1.5 border-r border-gray-900 text-center align-middle">Shade No</th>
-                <th className="p-1.5 border-r border-gray-900 text-center align-middle">Denier</th>
-                <th className="p-1.5 border-r border-gray-900 text-right align-middle">Weight (Kgs)</th>
-                <th className="p-1.5 border-r border-gray-900 text-right align-middle">Weight (Gms)</th>
-                <th className="p-1.5 border-r border-gray-900 text-center align-middle">Grd</th>
-                <th className="p-1.5 border-r border-gray-900 text-right align-middle">Rate/Kg</th>
-                <th className="p-1.5 text-right align-middle">Amount (₹)</th>
+                <th className="p-1 border-r border-gray-900 text-center align-middle whitespace-nowrap">Sr</th>
+                <th className="p-1 border-r border-gray-900 text-left align-middle whitespace-nowrap">Yarn Description</th>
+                <th className="p-1 border-r border-gray-900 text-center align-middle whitespace-nowrap">HSN</th>
+                <th className="p-1 border-r border-gray-900 text-center align-middle whitespace-nowrap">Shade</th>
+                <th className="p-1 border-r border-gray-900 text-center align-middle whitespace-nowrap">Shade No</th>
+                <th className="p-1 border-r border-gray-900 text-center align-middle whitespace-nowrap">Denier</th>
+                <th className="p-1 border-r border-gray-900 text-right align-middle leading-tight">
+                  <div>Weight</div>
+                  <div className="text-[7.5px] font-normal text-gray-700">(KGS)</div>
+                </th>
+                <th className="p-1 border-r border-gray-900 text-right align-middle leading-tight">
+                  <div>Weight</div>
+                  <div className="text-[7.5px] font-normal text-gray-700">(GMS)</div>
+                </th>
+                <th className="p-1 border-r border-gray-900 text-center align-middle whitespace-nowrap">Grd</th>
+                <th className="p-1 border-r border-gray-900 text-right align-middle whitespace-nowrap">Rate/Kg</th>
+                <th className="p-1 text-right align-middle whitespace-nowrap">Amount (₹)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-300 font-sans text-gray-900 text-[9.5px]">
               {items.map((item, idx) => {
                 const kgInt = Math.floor(item.weightKg || 0);
                 const gramVal = item.weightGram !== undefined ? item.weightGram : Math.round(((item.weightKg || 0) - kgInt) * 1000);
+                const shadeDisplay = (item.shade || '').split('|||')[0].replace(/\s*[\(\[\{].*?[\)\]\}]/g, '').trim() || '—';
 
                 return (
                   <tr key={item.id || idx} className="hover:bg-amber-50/10">
-                    <td className="p-1.5 border-r border-gray-900 text-center font-mono">{idx + 1}</td>
-                    <td className="p-1.5 border-r border-gray-900 font-medium truncate">
+                    <td className="p-1 border-r border-gray-900 text-center font-mono">{idx + 1}</td>
+                    <td className="p-1 border-r border-gray-900 font-medium truncate">
                       {item.description || 'Yarn Item'}
                     </td>
-                    <td className="p-1.5 border-r border-gray-900 text-center font-mono">{item.hsn || '5402'}</td>
-                    <td className="p-1.5 border-r border-gray-900 text-center truncate">{item.shade || '—'}</td>
-                    <td className="p-1.5 border-r border-gray-900 text-center font-mono">{item.shadeNo || '—'}</td>
-                    <td className="p-1.5 border-r border-gray-900 text-center font-mono">{item.denier || '—'}</td>
-                    <td className="p-1.5 border-r border-gray-900 text-right font-mono font-semibold">{kgInt}</td>
-                    <td className="p-1.5 border-r border-gray-900 text-right font-mono">{gramVal}</td>
-                    <td className="p-1.5 border-r border-gray-900 text-center font-mono font-bold">{item.grade || 'A'}</td>
-                    <td className="p-1.5 border-r border-gray-900 text-right font-mono">{formatCurrency(item.rate)}</td>
-                    <td className="p-1.5 text-right font-mono font-bold">{formatCurrency(item.amount)}</td>
+                    <td className="p-1 border-r border-gray-900 text-center font-mono whitespace-nowrap overflow-hidden text-ellipsis">{item.hsn || '54033100'}</td>
+                    <td className="p-1 border-r border-gray-900 text-center font-semibold uppercase whitespace-nowrap overflow-hidden text-ellipsis">{shadeDisplay}</td>
+                    <td className="p-1 border-r border-gray-900 text-center font-mono whitespace-nowrap">{item.shadeNo || '—'}</td>
+                    <td className="p-1 border-r border-gray-900 text-center font-mono whitespace-nowrap">{item.denier || '—'}</td>
+                    <td className="p-1 border-r border-gray-900 text-right font-mono font-semibold">{kgInt}</td>
+                    <td className="p-1 border-r border-gray-900 text-right font-mono">{gramVal}</td>
+                    <td className="p-1 border-r border-gray-900 text-center font-mono font-bold">{item.grade || 'A'}</td>
+                    <td className="p-1 border-r border-gray-900 text-right font-mono">{formatCurrency(item.rate)}</td>
+                    <td className="p-1 text-right font-mono font-bold">{formatCurrency(item.amount)}</td>
                   </tr>
                 );
               })}

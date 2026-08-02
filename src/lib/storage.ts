@@ -14,14 +14,14 @@ export const DEFAULT_SETTINGS: AppSettings = {
   defaultCompanyDetails: {
     companyName: 'K.S. TEX',
     tagline: 'Trading of Yarn & Soft Silk',
-    invocationLine: '|| Shree Ganeshay Namah ||',
-    address: 'Plot No. 42-A, Textile Market Road, Ring Road',
-    city: 'Surat',
-    state: 'Gujarat',
-    phone: '+91 98251 04291 / +91 94281 12093',
-    email: 'contact@kstex.in',
-    gstin: '24AAFCK1234F1Z9',
-    pan: 'AAFCK1234F',
+    invocationLine: '|| SRI MURUGAN THUNAI ||',
+    address: '247-B EATTI MUNIYAPPAN KOVIL STREET',
+    city: 'SALEM - 636015',
+    state: 'TAMIL NADU',
+    phone: '9003449226',
+    email: 'karthimani1978@gmail.com',
+    gstin: '33EXDPM4349N1Z1',
+    pan: 'EXDPM4349N',
     logoUrl: '',
   },
   defaultBankDetails: {
@@ -34,20 +34,38 @@ export const DEFAULT_SETTINGS: AppSettings = {
 2. Interest @ 18% p.a. will be charged on delayed payments after 30 days.
 3. All disputes are subject to Surat Jurisdiction only.
 4. E. & O. E.`,
-  denierOptions: ['50', '75', '100', '120', '150', '200', '300'],
+  denierOptions: ['100', '50', '75', '120', '150', '200', '300'],
   shadeOptions: [
-    { name: 'Natural White', hexColor: '#FFFFFF' },
-    { name: 'Jet Black', hexColor: '#1A1A1A' },
-    { name: 'Deep Navy', hexColor: '#1B2A4A' },
-    { name: 'Royal Coffee', hexColor: '#3E2723' },
-    { name: 'Crimson Red', hexColor: '#8B0000' },
-    { name: 'Cobalt Blue', hexColor: '#0047AB' },
-    { name: 'Saffron Yellow', hexColor: '#EAA221' },
-    { name: 'Soft Sage', hexColor: '#7FA37A' },
-    { name: 'Burnt Orange', hexColor: '#C85A17' },
-    { name: 'Warm Grey', hexColor: '#7A7267' },
-    { name: 'Royal Purple', hexColor: '#4A235A' },
-    { name: 'Blush Pink', hexColor: '#D98880' },
+    { name: 'CORAL PINK', shadeNo: 'A958', hexColor: '#F88379' },
+    { name: 'CHOCKLATE', shadeNo: 'A957', hexColor: '#7B3F00' },
+    { name: 'PEACH', shadeNo: 'A924', hexColor: '#FFDAB9' },
+    { name: 'GAJARI', shadeNo: 'A546', hexColor: '#E2583E' },
+    { name: 'COFFEE', shadeNo: 'A625', hexColor: '#4B3621' },
+    { name: 'LT.N.BLUE', shadeNo: 'A569', hexColor: '#87CEEB' },
+    { name: 'CHIKU', shadeNo: 'A913', hexColor: '#D2B48C' },
+    { name: 'MEHANDI', shadeNo: 'A529', hexColor: '#556B2F' },
+    { name: 'RUST', shadeNo: 'A556', hexColor: '#B7410E' },
+    { name: 'COFFEE', shadeNo: 'A837', hexColor: '#3D2817' },
+    { name: 'LT OLIVE', shadeNo: 'A908', hexColor: '#A2B567' },
+    { name: 'OLIVE', shadeNo: 'A918', hexColor: '#808000' },
+    { name: 'ANANDA', shadeNo: 'A527', hexColor: '#008080' },
+    { name: 'COFFEE', shadeNo: 'A507', hexColor: '#4A2E12' },
+    { name: 'GOLD', shadeNo: 'A521', hexColor: '#FFD700' },
+    { name: 'WINE', shadeNo: 'A613', hexColor: '#722F37' },
+    { name: 'VIOLET', shadeNo: 'A574', hexColor: '#8A2BE2' },
+    { name: 'GOLD', shadeNo: 'A536', hexColor: '#DAA520' },
+    { name: 'MAJENTA', shadeNo: 'A565', hexColor: '#FF00FF' },
+    { name: 'TUSSER', shadeNo: 'A775', hexColor: '#E0C097' },
+    { name: 'DUSTY PINK', shadeNo: 'A695', hexColor: '#DCAE96' },
+    { name: 'GAJARI', shadeNo: 'A822', hexColor: '#E06D53' },
+    { name: 'WINE', shadeNo: 'A497', hexColor: '#58111A' },
+    { name: 'GAJARI', shadeNo: 'A884', hexColor: '#F07050' },
+    { name: 'R.BLUE', shadeNo: 'A502', hexColor: '#4169E1' },
+    { name: 'RANI', shadeNo: 'A614', hexColor: '#E0115F' },
+    { name: 'MAROON', shadeNo: 'A540', hexColor: '#800000' },
+    { name: 'CHOCKLATE', shadeNo: 'A516', hexColor: '#5C2C16' },
+    { name: 'B.GREEN', shadeNo: 'A578', hexColor: '#006400' },
+    { name: 'OLIVE', shadeNo: 'A893', hexColor: '#6B8E23' },
   ],
   gradeOptions: ['A', 'B', 'C'],
 };
@@ -75,8 +93,8 @@ const INITIAL_SEED_INVOICES: Invoice[] = [
     buyerDetails: {
       companyName: 'Vardhman Weaving Mills Pvt Ltd',
       address: 'Shed No. 12-14, GIDC Silk Zone, Bhatar Road',
-      city: 'Surat',
-      state: 'Gujarat',
+      city: 'Salem',
+      state: 'Tamil Nadu',
       gstin: '24AAACV8891E1Z3',
       pan: 'AAACV8891E',
       phone: '+91 98980 11223',
@@ -85,8 +103,8 @@ const INITIAL_SEED_INVOICES: Invoice[] = [
       sameAsBuyer: true,
       companyName: 'Vardhman Weaving Mills Pvt Ltd',
       address: 'Shed No. 12-14, GIDC Silk Zone, Bhatar Road',
-      city: 'Surat',
-      state: 'Gujarat',
+      city: 'Salem',
+      state: 'Tamil Nadu',
       gstin: '24AAACV8891E1Z3',
     },
     transportDetails: {
@@ -102,7 +120,7 @@ const INITIAL_SEED_INVOICES: Invoice[] = [
         id: 'item_1',
         srNo: 1,
         description: 'Polyester Filament Textured Yarn 150/48 Nim',
-        hsn: '5402',
+        hsn: '54033100',
         carton: 12,
         cheese: 288,
         weightKg: 240,
@@ -119,7 +137,7 @@ const INITIAL_SEED_INVOICES: Invoice[] = [
         id: 'item_2',
         srNo: 2,
         description: 'Viscose Rayon Spun Soft Silk Yarn 100 Denier',
-        hsn: '5403',
+        hsn: '54033100',
         carton: 8,
         cheese: 192,
         weightKg: 160,
@@ -195,7 +213,7 @@ const INITIAL_SEED_INVOICES: Invoice[] = [
         id: 'item_201',
         srNo: 1,
         description: 'Micro Fiber DTY Intermingled Yarn 75/36',
-        hsn: '5402',
+        hsn: '54033100',
         carton: 25,
         cheese: 600,
         weightKg: 520,
@@ -243,8 +261,8 @@ const INITIAL_SEED_INVOICES: Invoice[] = [
     buyerDetails: {
       companyName: 'Shree Krishna Silk Mills',
       address: '204, Sahara Darwaja Silk Market',
-      city: 'Surat',
-      state: 'Gujarat',
+      city: 'Salem',
+      state: 'Tamil Nadu',
       gstin: '24AABCS7712M1ZP',
       pan: 'AABCS7712M',
       phone: '+91 98241 88200',
@@ -253,8 +271,8 @@ const INITIAL_SEED_INVOICES: Invoice[] = [
       sameAsBuyer: true,
       companyName: 'Shree Krishna Silk Mills',
       address: '204, Sahara Darwaja Silk Market',
-      city: 'Surat',
-      state: 'Gujarat',
+      city: 'Salem',
+      state: 'Tamil Nadu',
       gstin: '24AABCS7712M1ZP',
     },
     transportDetails: {
@@ -270,7 +288,7 @@ const INITIAL_SEED_INVOICES: Invoice[] = [
         id: 'item_301',
         srNo: 1,
         description: 'Twisted Silk Yarn Premium Grade 50 Denier',
-        hsn: '5007',
+        hsn: '54033100',
         carton: 10,
         cheese: 240,
         weightKg: 185,
@@ -303,7 +321,20 @@ export function getStoredSettings(): AppSettings {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (raw) {
-      return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+      const parsed = JSON.parse(raw);
+      const hasDyingProgramShades = parsed.shadeOptions && parsed.shadeOptions.some((s: any) => s.shadeNo);
+      const shadeOptions = hasDyingProgramShades ? parsed.shadeOptions : DEFAULT_SETTINGS.shadeOptions;
+      let companyDetails = { ...DEFAULT_SETTINGS.defaultCompanyDetails, ...parsed.defaultCompanyDetails };
+      if (
+        !parsed.defaultCompanyDetails?.gstin ||
+        parsed.defaultCompanyDetails?.gstin === '24AAFCK1234F1Z9' ||
+        parsed.defaultCompanyDetails?.email === 'contact@kstex.in' ||
+        parsed.defaultCompanyDetails?.invocationLine === '|| Shree Ganeshay Namah ||'
+      ) {
+        companyDetails = DEFAULT_SETTINGS.defaultCompanyDetails;
+      }
+
+      return { ...DEFAULT_SETTINGS, ...parsed, defaultCompanyDetails: companyDetails, shadeOptions };
     }
   } catch (e) {
     console.error('Failed to load settings from storage', e);
@@ -323,7 +354,30 @@ export function getStoredInvoices(): Invoice[] {
   try {
     const raw = localStorage.getItem(INVOICES_KEY);
     if (raw) {
-      return JSON.parse(raw);
+      const parsed: Invoice[] = JSON.parse(raw);
+      return parsed.map((inv) => {
+        let updated = { ...inv };
+        if (
+          !updated.companyDetails?.gstin ||
+          updated.companyDetails.gstin === '24AAFCK1234F1Z9' ||
+          updated.companyDetails.email === 'contact@kstex.in'
+        ) {
+          updated.companyDetails = DEFAULT_SETTINGS.defaultCompanyDetails;
+        }
+        if (updated.buyerDetails && (!updated.buyerDetails.state || updated.buyerDetails.state === 'Gujarat')) {
+          updated.buyerDetails = { ...updated.buyerDetails, state: 'Tamil Nadu' };
+        }
+        if (updated.deliveryDetails && (!updated.deliveryDetails.state || updated.deliveryDetails.state === 'Gujarat')) {
+          updated.deliveryDetails = { ...updated.deliveryDetails, state: 'Tamil Nadu' };
+        }
+        if (updated.items && Array.isArray(updated.items)) {
+          updated.items = updated.items.map((it) => ({
+            ...it,
+            hsn: (!it.hsn || it.hsn === '5402' || it.hsn === '5403' || it.hsn === '5007') ? '54033100' : it.hsn,
+          }));
+        }
+        return updated;
+      });
     }
     // Seed initial invoices if storage is empty
     localStorage.setItem(INVOICES_KEY, JSON.stringify(INITIAL_SEED_INVOICES));

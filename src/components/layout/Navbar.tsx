@@ -19,13 +19,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileMenu }) => {
 
   return (
     <header className="sticky top-0 z-30 w-full backdrop-blur-md bg-[var(--bg-base)]/90 border-b border-[var(--border-solid)] px-4 lg:px-8 py-3 transition-colors duration-300">
-      <div className="flex items-center justify-between max-w-7xl mx-auto">
+      <div className="flex items-center justify-between max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1720px] mx-auto">
         
         {/* Left: Mobile Menu Toggle & Brand Wordmark */}
         <div className="flex items-center space-x-3">
           <button
+            type="button"
             onClick={onToggleMobileMenu}
-            className="lg:hidden p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] transition-colors"
+            className="lg:hidden p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer"
             aria-label="Toggle Navigation Menu"
           >
             <Menu className="w-5 h-5" />
@@ -57,8 +58,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileMenu }) => {
         {/* Right: Theme Toggle & Admin Badge */}
         <div className="flex items-center space-x-3">
           <button
+            type="button"
             onClick={toggleTheme}
-            className="flex items-center space-x-2 px-3 py-1.5 rounded-lg border border-[var(--border-solid)] bg-[var(--bg-surface)] text-[var(--text-primary)] hover:border-[var(--accent-brass)] transition-all duration-200 text-xs font-medium cursor-pointer shadow-xs"
+            className="flex items-center space-x-2 px-3 py-1.5 rounded-lg border border-[var(--border-solid)] bg-[var(--bg-surface)] text-[var(--text-primary)] hover:border-[var(--accent-brass)] transition-all duration-200 text-xs font-medium cursor-pointer shadow-xs min-h-[36px]"
             title={`Switch to ${isDark ? 'Daylight' : 'Atelier Noir'} Mode`}
           >
             {isDark ? (

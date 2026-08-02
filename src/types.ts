@@ -126,6 +126,7 @@ export interface Customer {
 
 export interface ShadeOption {
   name: string;
+  shadeNo?: string;
   hexColor: string;
 }
 

@@ -41,8 +41,7 @@ export const InvoiceHistory: React.FC<InvoiceHistoryProps> = ({
   const filteredInvoices = invoices.filter((inv) => {
     const matchesSearch =
       inv.invoiceDetails.invoiceNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inv.buyerDetails.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inv.invoiceDetails.agentName.toLowerCase().includes(searchTerm.toLowerCase());
+      inv.buyerDetails.companyName.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = statusFilter === 'all' || inv.status === statusFilter;
     const matchesGst = gstFilter === 'all' || inv.invoiceDetails.gstType === gstFilter;
@@ -82,7 +81,7 @@ export const InvoiceHistory: React.FC<InvoiceHistoryProps> = ({
   };
 
   return (
-    <div className="space-y-6 p-4 lg:p-8 max-w-7xl mx-auto">
+    <div className="space-y-6 p-4 lg:p-8 max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1720px] mx-auto">
       
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -96,8 +95,9 @@ export const InvoiceHistory: React.FC<InvoiceHistoryProps> = ({
         </div>
 
         <button
+          type="button"
           onClick={onNavigateToGenerate}
-          className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-xs font-semibold hover:bg-[#d4b068] transition-colors cursor-pointer shadow-xs"
+          className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-xs font-semibold hover:bg-[#d4b068] transition-colors cursor-pointer shadow-xs min-h-[40px]"
         >
           <PlusCircle className="w-4 h-4" />
           <span>New Invoice</span>
@@ -114,7 +114,7 @@ export const InvoiceHistory: React.FC<InvoiceHistoryProps> = ({
           <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 pointer-events-none" />
           <input
             type="text"
-            placeholder="Search invoice #, buyer, agent..."
+            placeholder="Search invoice #, buyer..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-9 pr-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-xs text-[var(--text-primary)] focus:border-[var(--accent-brass)] outline-none"
@@ -192,7 +192,6 @@ export const InvoiceHistory: React.FC<InvoiceHistoryProps> = ({
                     </div>
                   </th>
                   <th className="px-5 py-3.5">Buyer Name</th>
-                  <th className="px-5 py-3.5">Agent</th>
                   <th className="px-5 py-3.5">GST Type</th>
                   <th className="px-5 py-3.5">Status</th>
                   <th
@@ -222,9 +221,6 @@ export const InvoiceHistory: React.FC<InvoiceHistoryProps> = ({
                     <td className="px-5 py-4 font-medium max-w-xs truncate">
                       {inv.buyerDetails.companyName || '—'}
                     </td>
-                    <td className="px-5 py-4 text-[var(--text-muted)]">
-                      {inv.invoiceDetails.agentName || '—'}
-                    </td>
                     <td className="px-5 py-4 font-mono text-[11px] text-[var(--text-muted)]">
                       {inv.invoiceDetails.gstType === 'INTRA_STATE' ? 'Intra (CGST+SGST)' : 'Inter (IGST)'}
                     </td>
@@ -245,29 +241,33 @@ export const InvoiceHistory: React.FC<InvoiceHistoryProps> = ({
                     <td className="px-5 py-4 text-center">
                       <div className="flex items-center justify-center space-x-1.5">
                         <button
+                          type="button"
                           onClick={() => onOpenInvoice(inv)}
-                          className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]"
+                          className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] cursor-pointer"
                           title="Open in Generator"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
                         <button
+                          type="button"
                           onClick={() => onDuplicateInvoice(inv)}
-                          className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]"
+                          className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] cursor-pointer"
                           title="Duplicate Invoice"
                         >
                           <Copy className="w-4 h-4" />
                         </button>
                         <button
+                          type="button"
                           onClick={() => onExportPdf(inv)}
-                          className="p-1.5 rounded-lg text-[var(--accent-brass)] hover:bg-[var(--accent-brass)]/15"
+                          className="p-1.5 rounded-lg text-[var(--accent-brass)] hover:bg-[var(--accent-brass)]/15 cursor-pointer"
                           title="Export PDF"
                         >
                           <FileDown className="w-4 h-4" />
                         </button>
                         <button
+                          type="button"
                           onClick={() => setDeleteConfirmId(inv.id)}
-                          className="p-1.5 rounded-lg text-[var(--status-error)] hover:bg-[var(--status-error)]/15"
+                          className="p-1.5 rounded-lg text-[var(--status-error)] hover:bg-[var(--status-error)]/15 cursor-pointer"
                           title="Delete Invoice"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -294,12 +294,14 @@ export const InvoiceHistory: React.FC<InvoiceHistoryProps> = ({
             </p>
             <div className="flex justify-center space-x-3 pt-2">
               <button
+                type="button"
                 onClick={() => setDeleteConfirmId(null)}
                 className="px-4 py-2 rounded-xl text-xs text-[var(--text-muted)] hover:bg-[var(--bg-surface-hover)] cursor-pointer"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={() => {
                   onDeleteInvoice(deleteConfirmId);
                   setDeleteConfirmId(null);

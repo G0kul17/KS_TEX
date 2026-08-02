@@ -47,10 +47,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
     .reduce((acc, inv) => acc + inv.totals.amountAfterTax, 0);
 
   // Animated Count-Up Hook
-  const useAnimatedCounter = (endValue: number, duration: number = 1000) => {
-    const [count, setCount] = useState(0);
+  const useAnimatedCounter = (endValue: number, duration: number = 800) => {
+    const [count, setCount] = useState(endValue);
 
     useEffect(() => {
+      if (endValue <= 0) {
+        setCount(0);
+        return;
+      }
       let start = 0;
       const increment = endValue / (duration / 16);
       const timer = setInterval(() => {
@@ -83,7 +87,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   };
 
   return (
-    <div className="space-[#15130f] space-y-8 p-4 lg:p-8 max-w-7xl mx-auto">
+    <div className="space-[#15130f] space-y-8 p-4 lg:p-8 max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1720px] mx-auto">
       
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -97,8 +101,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
         <button
+          type="button"
           onClick={onNavigateToGenerate}
-          className="inline-flex items-center justify-center space-x-2 px-5 py-3 rounded-xl bg-[var(--accent-brass)] text-[#15130f] font-medium hover:bg-[#d4b068] active:scale-98 transition-all duration-200 cursor-pointer shadow-lg shadow-[var(--accent-brass)]/10"
+          className="inline-flex items-center justify-center space-x-2 px-5 py-3 rounded-xl bg-[var(--accent-brass)] text-[#15130f] font-medium hover:bg-[#d4b068] active:scale-98 transition-all duration-200 cursor-pointer shadow-lg shadow-[var(--accent-brass)]/10 min-h-[44px]"
         >
           <PlusCircle className="w-5 h-5" />
           <span className="font-semibold">Create New Invoice</span>
@@ -236,8 +241,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
 
           <button
+            type="button"
             onClick={onNavigateToGenerate}
-            className="shrink-0 flex items-center space-x-2.5 px-6 py-3.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] font-semibold hover:bg-[#d4b068] transition-all duration-200 cursor-pointer shadow-md group"
+            className="shrink-0 flex items-center space-x-2.5 px-6 py-3.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] font-semibold hover:bg-[#d4b068] transition-all duration-200 cursor-pointer shadow-md group min-h-[44px]"
           >
             <span>Open Generator</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -271,8 +277,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </p>
             </div>
             <button
+              type="button"
               onClick={onNavigateToGenerate}
-              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-sm font-semibold hover:bg-[#d4b068] transition-colors"
+              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-sm font-semibold hover:bg-[#d4b068] transition-colors cursor-pointer min-h-[40px]"
             >
               <PlusCircle className="w-4 h-4" />
               <span>New Invoice</span>
@@ -310,7 +317,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         {inv.buyerDetails.companyName || '—'}
                       </td>
                       <td className="px-5 py-4 text-[var(--text-muted)]">
-                        {inv.buyerDetails.state || 'Gujarat'}
+                        {inv.buyerDetails.state || 'Tamil Nadu'}
                       </td>
                       <td className="px-5 py-4">
                         {inv.status === 'finalized' ? (
@@ -329,15 +336,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
                       <td className="px-5 py-4 text-center">
                         <div className="flex items-center justify-center space-x-2">
                           <button
+                            type="button"
                             onClick={() => onViewInvoice(inv)}
-                            className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] transition-colors"
+                            className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] transition-colors cursor-pointer"
                             title="Preview Invoice"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                           <button
+                            type="button"
                             onClick={() => onExportPdf(inv)}
-                            className="p-1.5 rounded-lg text-[var(--accent-brass)] hover:bg-[var(--accent-brass)]/15 transition-colors"
+                            className="p-1.5 rounded-lg text-[var(--accent-brass)] hover:bg-[var(--accent-brass)]/15 transition-colors cursor-pointer"
                             title="Export PDF"
                           >
                             <FileDown className="w-4 h-4" />

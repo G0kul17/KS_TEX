@@ -29,7 +29,7 @@ export const CustomerDirectory: React.FC<CustomerDirectoryProps> = ({
   };
 
   return (
-    <div className="space-y-6 p-4 lg:p-8 max-w-7xl mx-auto">
+    <div className="space-y-6 p-4 lg:p-8 max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1720px] mx-auto">
       
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -93,7 +93,7 @@ export const CustomerDirectory: React.FC<CustomerDirectoryProps> = ({
                     </h3>
                     <div className="text-[11px] text-[var(--text-muted)] flex items-center gap-1 font-mono">
                       <MapPin className="w-3 h-3 text-[var(--accent-brass)] shrink-0" />
-                      <span>{cust.state || 'Gujarat'}</span>
+                      <span>{cust.state || 'Tamil Nadu'}</span>
                     </div>
                   </div>
 
@@ -126,8 +126,9 @@ export const CustomerDirectory: React.FC<CustomerDirectoryProps> = ({
 
               <div className="pt-3 border-t border-[var(--border-hairline)]">
                 <button
+                  type="button"
                   onClick={() => onCreateInvoiceForCustomer(cust)}
-                  className="w-full inline-flex items-center justify-center space-x-2 px-4 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] hover:border-[var(--accent-brass)] text-[var(--text-primary)] text-xs font-semibold hover:bg-[var(--accent-brass)] hover:text-[#15130f] transition-all cursor-pointer shadow-xs"
+                  className="w-full inline-flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] hover:border-[var(--accent-brass)] text-[var(--text-primary)] text-xs font-semibold hover:bg-[var(--accent-brass)] hover:text-[#15130f] transition-all cursor-pointer shadow-xs min-h-[40px]"
                 >
                   <FilePlus className="w-4 h-4" />
                   <span>Create Invoice For Buyer</span>

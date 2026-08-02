@@ -37,7 +37,7 @@ export const DraftBills: React.FC<DraftBillsProps> = ({
   };
 
   return (
-    <div className="space-y-6 p-4 lg:p-8 max-w-7xl mx-auto">
+    <div className="space-y-6 p-4 lg:p-8 max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1720px] mx-auto">
       
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -72,8 +72,9 @@ export const DraftBills: React.FC<DraftBillsProps> = ({
             </p>
           </div>
           <button
+            type="button"
             onClick={onNavigateToGenerate}
-            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-xs font-semibold hover:bg-[#d4b068] transition-colors"
+            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-xs font-semibold hover:bg-[#d4b068] transition-colors cursor-pointer min-h-[40px]"
           >
             <span>Start New Invoice</span>
           </button>
@@ -125,6 +126,7 @@ export const DraftBills: React.FC<DraftBillsProps> = ({
               {/* Action Buttons */}
               <div className="flex items-center justify-between pt-2 border-t border-[var(--border-hairline)]">
                 <button
+                  type="button"
                   onClick={() => setDeleteConfirmId(draft.id)}
                   className="p-2 rounded-lg text-[var(--status-error)] hover:bg-[var(--status-error)]/10 text-xs font-mono flex items-center space-x-1 cursor-pointer transition-colors"
                 >
@@ -133,6 +135,7 @@ export const DraftBills: React.FC<DraftBillsProps> = ({
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => onResumeDraft(draft)}
                   className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-xs font-bold hover:bg-[#d4b068] cursor-pointer transition-colors"
                 >
@@ -157,12 +160,14 @@ export const DraftBills: React.FC<DraftBillsProps> = ({
             </p>
             <div className="flex justify-center space-x-3 pt-2">
               <button
+                type="button"
                 onClick={() => setDeleteConfirmId(null)}
                 className="px-4 py-2 rounded-xl text-xs text-[var(--text-muted)] hover:bg-[var(--bg-surface-hover)] cursor-pointer"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={() => {
                   onDeleteDraft(deleteConfirmId);
                   setDeleteConfirmId(null);

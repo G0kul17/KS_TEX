@@ -51,8 +51,8 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
       buyerDetails: {
         companyName: '',
         address: '',
-        city: 'Surat',
-        state: 'Gujarat',
+        city: 'Salem',
+        state: 'Tamil Nadu',
         gstin: '',
         pan: '',
         phone: '',
@@ -61,8 +61,8 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
         sameAsBuyer: true,
         companyName: '',
         address: '',
-        city: 'Surat',
-        state: 'Gujarat',
+        city: 'Salem',
+        state: 'Tamil Nadu',
         gstin: '',
       },
       transportDetails: {
@@ -77,14 +77,15 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
         {
           id: `item_${Date.now()}`,
           srNo: 1,
-          description: 'Polyester Filament Textured Yarn 150/48 Nim',
-          hsn: '5402',
+          description: '100 Soft Silk Yarn',
+          hsn: '54033100',
           carton: 10,
           cheese: 240,
           weightKg: 200,
           weightGram: 0,
-          denier: settings.denierOptions[0] || '150',
-          shade: settings.shadeOptions[0]?.name || 'Natural White',
+          denier: settings.denierOptions[0] || '100',
+          shade: settings.shadeOptions[0]?.name || 'CORAL PINK',
+          shadeNo: settings.shadeOptions[0]?.shadeNo || 'A958',
           lotNo: 'LOT-A10',
           grade: 'A',
           rate: 140,
@@ -163,7 +164,7 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
     <div className="relative pb-24 min-h-[calc(100vh-60px)]">
       
       {/* Top Bar Status Indicator */}
-      <div className="p-4 lg:p-6 pb-2 max-w-7xl mx-auto flex items-center justify-between">
+      <div className="p-4 lg:p-6 pb-2 max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1720px] mx-auto flex items-center justify-between">
         <div>
           <h1 className="font-serif-display text-2xl lg:text-3xl font-bold text-[var(--text-primary)]">
             Invoice Generator
@@ -186,15 +187,15 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
         </div>
       </div>
 
-      <div className="px-4 lg:px-6 max-w-7xl mx-auto">
+      <div className="px-4 lg:px-6 max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1720px] mx-auto">
         <div className="thread-stitch"></div>
       </div>
 
       {/* Main Two-Column Layout */}
-      <div className="p-4 lg:p-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="p-4 lg:p-6 max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1720px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start">
         
-        {/* Left Column: Form Controls (7 cols) */}
-        <div className="lg:col-span-7 space-y-6">
+        {/* Left Column: Form Controls (7 cols on lg, 6 cols on 2xl) */}
+        <div className="lg:col-span-7 2xl:col-span-6 space-y-6">
           <InvoiceForm
             invoice={invoice}
             onChange={setInvoice}
@@ -202,15 +203,17 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
           />
         </div>
 
-        {/* Right Column: Sticky Live A4 Invoice Preview (5 cols) */}
-        <div className="hidden lg:block lg:col-span-5 sticky top-20 max-h-[calc(100vh-100px)] overflow-y-auto pr-1">
+        {/* Right Column: Sticky Live A4 Invoice Preview (5 cols on lg, 6 cols on 2xl) */}
+        <div className="hidden lg:block lg:col-span-5 2xl:col-span-6 sticky top-20 max-h-[calc(100vh-100px)] overflow-y-auto pr-1">
           <div className="space-y-2">
             <div className="flex items-center justify-between px-1 text-xs font-mono text-[var(--text-muted)]">
               <span>Live A4 Physical Document Replica</span>
-              <span className="text-[var(--accent-brass)]">Auto-sync ON</span>
+              <span className="text-[var(--accent-brass)] font-semibold">Auto-sync ON</span>
             </div>
 
-            <InvoicePreview invoice={invoice} previewRef={previewRef} />
+            <div className="bg-[var(--bg-surface)] p-2 rounded-2xl border border-[var(--border-solid)] shadow-[var(--shadow-warm)] overflow-x-auto">
+              <InvoicePreview invoice={invoice} previewRef={previewRef} />
+            </div>
           </div>
         </div>
 
@@ -218,21 +221,23 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
 
       {/* STICKY BOTTOM ACTION BAR */}
       <div className="fixed bottom-0 left-0 right-0 z-30 bg-[var(--bg-surface)]/95 backdrop-blur-md border-t border-[var(--border-solid)] py-3 px-4 lg:px-8 shadow-2xl">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        <div className="max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1720px] mx-auto flex items-center justify-between gap-4">
           
           {/* Left: Mobile Preview Button */}
           <div className="flex items-center space-x-2">
             <button
+              type="button"
               onClick={() => setShowMobilePreviewModal(true)}
-              className="lg:hidden inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-[var(--bg-surface-hover)] border border-[var(--border-solid)] text-[var(--text-primary)] text-xs font-semibold cursor-pointer"
+              className="lg:hidden inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-[var(--bg-surface-hover)] border border-[var(--border-solid)] text-[var(--text-primary)] text-xs font-semibold cursor-pointer min-h-[40px]"
             >
               <Eye className="w-4 h-4 text-[var(--accent-brass)]" />
               <span>Preview (A4)</span>
             </button>
 
             <button
+              type="button"
               onClick={() => setShowConfirmReset(true)}
-              className="hidden sm:inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl border border-[var(--border-hairline)] text-[var(--text-muted)] hover:text-[var(--status-error)] hover:bg-[var(--status-error)]/10 text-xs font-mono cursor-pointer transition-colors"
+              className="hidden sm:inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl border border-[var(--border-hairline)] text-[var(--text-muted)] hover:text-[var(--status-error)] hover:bg-[var(--status-error)]/10 text-xs font-mono cursor-pointer transition-colors min-h-[40px]"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Reset</span>
@@ -240,12 +245,13 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
           </div>
 
           {/* Right Action Buttons */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3">
             
             {/* Save Draft */}
             <button
+              type="button"
               onClick={handleSaveDraft}
-              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl border border-[var(--border-solid)] bg-[var(--bg-base)] text-[var(--text-primary)] text-xs font-semibold hover:border-[var(--accent-brass)] transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center space-x-2 px-3.5 sm:px-4 py-2.5 rounded-xl border border-[var(--border-solid)] bg-[var(--bg-base)] text-[var(--text-primary)] text-xs font-semibold hover:border-[var(--accent-brass)] transition-colors cursor-pointer shadow-xs min-h-[40px]"
             >
               <FileClock className="w-4 h-4 text-[var(--accent-terracotta)]" />
               <span className="hidden sm:inline">Save Draft</span>
@@ -253,8 +259,9 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
 
             {/* Print */}
             <button
+              type="button"
               onClick={handlePrint}
-              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl border border-[var(--border-solid)] bg-[var(--bg-base)] text-[var(--text-primary)] text-xs font-semibold hover:border-[var(--accent-brass)] transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center space-x-2 px-3.5 sm:px-4 py-2.5 rounded-xl border border-[var(--border-solid)] bg-[var(--bg-base)] text-[var(--text-primary)] text-xs font-semibold hover:border-[var(--accent-brass)] transition-colors cursor-pointer shadow-xs min-h-[40px]"
             >
               <Printer className="w-4 h-4 text-[var(--accent-brass)]" />
               <span>Print</span>
@@ -262,9 +269,10 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
 
             {/* Primary Gold: Generate PDF */}
             <button
+              type="button"
               onClick={handleGeneratePdfAndFinalize}
               disabled={isGeneratingPdf}
-              className="inline-flex items-center space-x-2 px-6 py-2.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-xs font-bold hover:bg-[#d4b068] active:scale-98 transition-all duration-200 cursor-pointer shadow-md disabled:opacity-50"
+              className="inline-flex items-center space-x-2 px-4 sm:px-6 py-2.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-xs font-bold hover:bg-[#d4b068] active:scale-98 transition-all duration-200 cursor-pointer shadow-md disabled:opacity-50 min-h-[40px]"
             >
               {isGeneratingPdf ? (
                 <>
@@ -292,8 +300,9 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
               A4 Invoice Preview
             </span>
             <button
+              type="button"
               onClick={() => setShowMobilePreviewModal(false)}
-              className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -328,6 +337,7 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
 
             <div className="flex justify-center space-x-3">
               <button
+                type="button"
                 onClick={() => setShowSuccessDialog(false)}
                 className="px-5 py-2.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-xs font-semibold hover:bg-[#d4b068] cursor-pointer"
               >
@@ -350,12 +360,14 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
             </p>
             <div className="flex justify-center space-x-3 pt-2">
               <button
+                type="button"
                 onClick={() => setShowConfirmReset(false)}
                 className="px-4 py-2 rounded-xl text-xs text-[var(--text-muted)] hover:bg-[var(--bg-surface-hover)] cursor-pointer"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={handleResetForm}
                 className="px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--status-error)] text-white hover:bg-[#a54338] cursor-pointer"
               >

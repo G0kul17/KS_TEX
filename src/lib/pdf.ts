@@ -350,51 +350,62 @@ export async function generateInvoicePdf(
  * Trigger native print dialog for the invoice element.
  */
 export function printInvoiceElement(element: HTMLElement): void {
-  const printWindow = window.open('', '_blank');
-  if (!printWindow) {
-    window.print();
-    return;
+  try {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      window.print();
+      return;
+    }
+
+    const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+      .map((style) => style.outerHTML)
+      .join('');
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>KS TEX — Print Invoice</title>
+          ${styles}
+          <style>
+            body {
+              background-color: #ffffff !important;
+              margin: 0;
+              padding: 10mm;
+              font-family: 'Inter', sans-serif;
+            }
+            @page {
+              size: A4 portrait;
+              margin: 5mm;
+            }
+          </style>
+        </head>
+        <body>
+          <div style="max-width: 210mm; margin: 0 auto;">
+            ${element.outerHTML}
+          </div>
+          <script>
+            window.onload = function() {
+              setTimeout(function() {
+                try {
+                  window.print();
+                  window.close();
+                } catch(e) {}
+              }, 300);
+            };
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  } catch (e) {
+    console.warn('Pop-up or window.open blocked by sandbox environment:', e);
+    try {
+      window.print();
+    } catch (err) {
+      console.error('window.print failed:', err);
+    }
   }
-
-  const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
-    .map((style) => style.outerHTML)
-    .join('');
-
-  printWindow.document.write(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>KS TEX — Print Invoice</title>
-        ${styles}
-        <style>
-          body {
-            background-color: #ffffff !important;
-            margin: 0;
-            padding: 10mm;
-            font-family: 'Inter', sans-serif;
-          }
-          @page {
-            size: A4 portrait;
-            margin: 5mm;
-          }
-        </style>
-      </head>
-      <body>
-        <div style="max-width: 210mm; margin: 0 auto;">
-          ${element.outerHTML}
-        </div>
-        <script>
-          window.onload = function() {
-            setTimeout(function() {
-              window.print();
-              window.close();
-            }, 300);
-          };
-        </script>
-      </body>
-    </html>
-  `);
-  printWindow.document.close();
 }
 
 export const downloadInvoicePDF = generateInvoicePdf;

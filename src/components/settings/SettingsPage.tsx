@@ -23,6 +23,7 @@ export const SettingsPage: React.FC = () => {
 
   const [newDenierChip, setNewDenierChip] = useState('');
   const [newShadeName, setNewShadeName] = useState('');
+  const [newShadeNo, setNewShadeNo] = useState('');
   const [newShadeHex, setNewShadeHex] = useState('#C6A15B');
 
   const handleSaveSettings = () => {
@@ -74,28 +75,32 @@ export const SettingsPage: React.FC = () => {
   const handleAddShadeChip = () => {
     if (!newShadeName.trim()) return;
     const exists = formSettings.shadeOptions.some(
-      (s) => s.name.toLowerCase() === newShadeName.trim().toLowerCase()
+      (s) => s.name.toLowerCase() === newShadeName.trim().toLowerCase() && s.shadeNo === newShadeNo.trim()
     );
     if (!exists) {
       setFormSettings({
         ...formSettings,
-        shadeOptions: [...formSettings.shadeOptions, { name: newShadeName.trim(), hexColor: newShadeHex }],
+        shadeOptions: [
+          ...formSettings.shadeOptions,
+          { name: newShadeName.trim(), shadeNo: newShadeNo.trim() || undefined, hexColor: newShadeHex },
+        ],
       });
     }
     setNewShadeName('');
+    setNewShadeNo('');
   };
 
-  const handleRemoveShadeChip = (name: string) => {
+  const handleRemoveShadeChip = (name: string, shadeNo?: string) => {
     setFormSettings({
       ...formSettings,
-      shadeOptions: formSettings.shadeOptions.filter((s) => s.name !== name),
+      shadeOptions: formSettings.shadeOptions.filter((s) => !(s.name === name && s.shadeNo === shadeNo)),
     });
   };
 
   const isDark = settings.theme === 'atelier-noir';
 
   return (
-    <div className="space-y-6 p-4 lg:p-8 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 p-4 lg:p-8 max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1720px] mx-auto pb-16">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -109,8 +114,9 @@ export const SettingsPage: React.FC = () => {
         </div>
 
         <button
+          type="button"
           onClick={handleSaveSettings}
-          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-xs font-bold hover:bg-[#d4b068] transition-all cursor-pointer shadow-md"
+          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-xs font-bold hover:bg-[#d4b068] transition-all cursor-pointer shadow-md min-h-[40px]"
         >
           {showSavedToast ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
           <span>{showSavedToast ? 'Settings Saved!' : 'Save Preferences'}</span>
@@ -136,6 +142,7 @@ export const SettingsPage: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-3 pt-2">
             <button
+              type="button"
               onClick={() => {
                 setFormSettings({ ...formSettings, theme: 'atelier-noir' });
                 if (settings.theme !== 'atelier-noir') toggleTheme();
@@ -152,6 +159,7 @@ export const SettingsPage: React.FC = () => {
             </button>
 
             <button
+              type="button"
               onClick={() => {
                 setFormSettings({ ...formSettings, theme: 'daylight' });
                 if (settings.theme !== 'daylight') toggleTheme();
@@ -241,6 +249,7 @@ export const SettingsPage: React.FC = () => {
               className="flex-1 px-3 py-1.5 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-xs text-[var(--text-primary)] font-mono outline-none focus:border-[var(--accent-brass)]"
             />
             <button
+              type="button"
               onClick={handleAddDenierChip}
               className="px-3 py-1.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-xs font-bold hover:bg-[#d4b068] cursor-pointer"
             >
@@ -260,20 +269,25 @@ export const SettingsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
-            {formSettings.shadeOptions.map((shade) => (
+          <div className="flex flex-wrap items-center gap-2.5 max-h-72 overflow-y-auto p-1">
+            {formSettings.shadeOptions.map((shade, idx) => (
               <span
-                key={shade.name}
+                key={`${shade.name}-${shade.shadeNo || idx}`}
                 className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-xs font-medium text-[var(--text-primary)]"
               >
                 <span
                   className="w-3 h-3 rounded-full border border-gray-400 shrink-0"
                   style={{ backgroundColor: shade.hexColor }}
                 />
-                <span>{shade.name}</span>
+                <span>
+                  {shade.name}{' '}
+                  {shade.shadeNo && (
+                    <span className="font-mono text-[var(--accent-brass)] font-semibold">({shade.shadeNo})</span>
+                  )}
+                </span>
                 <button
                   type="button"
-                  onClick={() => handleRemoveShadeChip(shade.name)}
+                  onClick={() => handleRemoveShadeChip(shade.name, shade.shadeNo)}
                   className="text-[var(--text-muted)] hover:text-[var(--status-error)] cursor-pointer"
                 >
                   ×
@@ -282,23 +296,31 @@ export const SettingsPage: React.FC = () => {
             ))}
           </div>
 
-          <div className="flex items-center space-x-2 pt-2 max-w-sm">
+          <div className="flex flex-wrap items-center gap-2 pt-2 max-w-md">
             <input
               type="text"
-              placeholder="Shade Name (e.g. Olive Green)"
+              placeholder="Color Name (e.g. CORAL PINK)"
               value={newShadeName}
               onChange={(e) => setNewShadeName(e.target.value)}
-              className="flex-1 px-3 py-1.5 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-xs text-[var(--text-primary)] outline-none focus:border-[var(--accent-brass)]"
+              className="flex-1 min-w-[140px] px-3 py-1.5 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-xs text-[var(--text-primary)] outline-none focus:border-[var(--accent-brass)]"
+            />
+            <input
+              type="text"
+              placeholder="Shade No (e.g. A958)"
+              value={newShadeNo}
+              onChange={(e) => setNewShadeNo(e.target.value)}
+              className="w-28 px-3 py-1.5 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-xs text-[var(--text-primary)] font-mono outline-none focus:border-[var(--accent-brass)] uppercase"
             />
             <input
               type="color"
               value={newShadeHex}
               onChange={(e) => setNewShadeHex(e.target.value)}
-              className="w-8 h-8 rounded-lg bg-[var(--bg-base)] border border-[var(--border-solid)] cursor-pointer p-0.5"
+              className="w-8 h-8 rounded-lg bg-[var(--bg-base)] border border-[var(--border-solid)] cursor-pointer p-0.5 shrink-0"
             />
             <button
+              type="button"
               onClick={handleAddShadeChip}
-              className="px-3 py-1.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-xs font-bold hover:bg-[#d4b068] cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-xs font-bold hover:bg-[#d4b068] cursor-pointer shrink-0"
             >
               Add
             </button>

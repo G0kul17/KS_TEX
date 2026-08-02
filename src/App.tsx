@@ -114,8 +114,8 @@ export function AppContent() {
       buyerDetails: {
         companyName: customer.companyName,
         address: customer.address,
-        city: 'Surat',
-        state: customer.state || 'Gujarat',
+        city: 'Salem',
+        state: customer.state || 'Tamil Nadu',
         gstin: customer.gstin,
         pan: '',
         phone: customer.phone,
@@ -124,8 +124,8 @@ export function AppContent() {
         sameAsBuyer: true,
         companyName: customer.companyName,
         address: customer.address,
-        city: 'Surat',
-        state: customer.state || 'Gujarat',
+        city: 'Salem',
+        state: customer.state || 'Tamil Nadu',
         gstin: customer.gstin,
       },
     };
