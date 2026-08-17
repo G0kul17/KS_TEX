@@ -1,0 +1,6 @@
+{
+  "name": "KS TEX Invoice Manager",
+  "description": "Luxury textile atelier invoice management software with live A4 preview, GST tax calculation, PDF export, and Firebase Firestore cloud database persistence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

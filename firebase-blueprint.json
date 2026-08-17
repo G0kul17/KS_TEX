@@ -1,0 +1,36 @@
+{
+  "entities": {
+    "invoices": {
+      "title": "Invoice",
+      "description": "Permanent store for silk yarn trade invoices",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "status": { "type": "string", "enum": ["draft", "finalized"] },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "companyDetails": { "type": "object" },
+        "bankDetails": { "type": "object" },
+        "termsConditions": { "type": "string" },
+        "invoiceDetails": { "type": "object" },
+        "buyerDetails": { "type": "object" },
+        "deliveryDetails": { "type": "object" },
+        "transportDetails": { "type": "object" },
+        "items": { "type": "array" },
+        "totals": { "type": "object" }
+      },
+      "required": ["id", "status", "createdAt", "updatedAt"]
+    },
+    "settings": {
+      "title": "AppSettings",
+      "description": "Application settings and defaults",
+      "type": "object",
+      "properties": {
+        "theme": { "type": "string" },
+        "invoicePrefix": { "type": "string" },
+        "defaultCompanyDetails": { "type": "object" },
+        "defaultBankDetails": { "type": "object" }
+      }
+    }
+  }
+}

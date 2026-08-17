@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Sophisticated Dark (Atelier Noir) */
+    --bg-base: #0a0a0a;
+    --bg-surface: #121212;
+    --bg-surface-hover: #1c1c1c;
+    --accent-brass: #c6a15b;
+    --accent-gold: #d4b068;
+    --accent-terracotta: #c86a4b;
+    --text-primary: #f2f2f2;
+    --text-muted: #8e8e93;
+    --status-success: #6eaf73;
+    --status-error: #e06c60;
+    --border-hairline: rgba(255, 255, 255, 0.08);
+    --border-solid: rgba(255, 255, 255, 0.12);
+    --shadow-warm: 0 16px 40px -12px rgba(0, 0, 0, 0.85);
+    --font-serif: Georgia, 'Fraunces', 'Playfair Display', serif;
+    --font-sans: 'Helvetica Neue', Arial, 'Inter', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  [data-theme='daylight'] {
+    /* Daylight (Light Mode) */
+    --bg-base: #f7f2e9;
+    --bg-surface: #ffffff;
+    --bg-surface-hover: #fcf9f2;
+    --accent-brass: #a9822f;
+    --accent-terracotta: #a64f30;
+    --text-primary: #231f1a;
+    --text-muted: #71685c;
+    --status-success: #4d7a48;
+    --status-error: #b34a40;
+    --border-hairline: rgba(226, 218, 203, 0.8);
+    --border-solid: #e2dacb;
+    --shadow-warm: 0 8px 24px -6px rgba(120, 100, 70, 0.08);
+  }
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* Subtle fabric/weave texture background */
+.weave-pattern {
+  background-image: radial-gradient(rgba(198, 161, 91, 0.08) 0.5px, transparent 0.5px);
+  background-size: 16px 16px;
+  background-position: -8px -8px;
+}
+
+.font-serif-display {
+  font-family: var(--font-serif);
+}
+
+.font-mono-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Gold thread stitch dashed divider signature motif */
+.thread-stitch {
+  border-top: 1px dashed var(--accent-brass);
+  opacity: 0.6;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+
+.thread-stitch::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  background-color: var(--accent-brass);
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.thread-stitch::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  right: 0;
+  width: 5px;
+  height: 5px;
+  background-color: var(--accent-brass);
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+/* Printable A4 Document Styling */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
+  }
+}
+
+/* Custom scrollbars matching theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-solid);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-brass);
+}
