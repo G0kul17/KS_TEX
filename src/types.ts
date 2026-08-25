@@ -1,3 +1,5 @@
+export type DocumentType = 'invoice' | 'debit_note';
+
 export type GstType = 'INTRA_STATE' | 'INTER_STATE';
 
 export type InvoiceStatus = 'draft' | 'finalized';
@@ -80,6 +82,8 @@ export interface InvoiceDetails {
   cgstPercent: number;
   sgstPercent: number;
   igstPercent: number;
+  originalInvoiceNo?: string;
+  returnDate?: string;
 }
 
 export interface InvoiceTotals {
@@ -98,6 +102,7 @@ export interface InvoiceTotals {
 
 export interface Invoice {
   id: string;
+  documentType?: DocumentType;
   invoiceDetails: InvoiceDetails;
   companyDetails: CompanyDetails;
   buyerDetails: BuyerDetails;
@@ -139,6 +144,7 @@ export interface AppSettings {
   defaultSgstPercent: number;
   defaultIgstPercent: number;
   invoicePrefix: string;
+  debitNotePrefix: string;
   denierOptions: string[];
   shadeOptions: ShadeOption[];
   gradeOptions: GradeType[];

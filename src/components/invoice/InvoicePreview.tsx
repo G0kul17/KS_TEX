@@ -30,6 +30,8 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
 
   const showTransport = transportDetails?.enabled === true;
 
+  const isDebitNote = invoice.documentType === 'debit_note';
+
   return (
     <div className="bg-white rounded-xl shadow-2xl p-2 sm:p-3 max-w-[210mm] mx-auto overflow-hidden">
       <div
@@ -75,7 +77,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
           {/* Header Titles */}
           <div className="inline-block border-b border-gray-900 pb-0.5 mb-1">
             <span className="uppercase text-[10px] tracking-widest font-mono font-bold text-gray-800">
-              TAX INVOICE
+              {isDebitNote ? 'DEBIT NOTE' : 'TAX INVOICE'}
             </span>
           </div>
 
@@ -93,27 +95,54 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
           </p>
         </div>
 
-        {/* 3. INVOICE META ROW (4 Columns) */}
-        <div className="border-b border-gray-900 grid grid-cols-4 divide-x divide-gray-900 bg-gray-50/40 text-[10.5px]">
-          <div className="p-2">
-            <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">Invoice No</span>
-            <span className="font-mono font-bold text-black">{invoiceDetails.invoiceNo}</span>
+        {/* 3. DOCUMENT META ROW */}
+        {isDebitNote ? (
+          <div className="border-b border-gray-900 grid grid-cols-5 divide-x divide-gray-900 bg-gray-50/40 text-[10px]">
+            <div className="p-2">
+              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold">Debit Note No</span>
+              <span className="font-mono font-bold text-black">{invoiceDetails.invoiceNo}</span>
+            </div>
+            <div className="p-2 bg-amber-50/20">
+              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold">Original Invoice No</span>
+              <span className="font-mono font-bold text-black">{invoiceDetails.originalInvoiceNo || '—'}</span>
+            </div>
+            <div className="p-2">
+              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold">Invoice Date</span>
+              <span className="font-mono font-semibold text-black">{invoiceDetails.invoiceDate}</span>
+            </div>
+            <div className="p-2 bg-amber-50/40">
+              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold">Debit Date (Return Date)</span>
+              <span className="font-mono font-bold text-amber-950">{invoiceDetails.returnDate || invoiceDetails.invoiceDate}</span>
+            </div>
+            <div className="p-2 bg-amber-50/30">
+              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold">GST Type</span>
+              <span className="font-mono font-bold text-amber-900 truncate block">
+                {invoiceDetails.gstType === 'INTRA_STATE' ? 'Intra (CGST+SGST)' : 'Inter (IGST)'}
+              </span>
+            </div>
           </div>
-          <div className="p-2">
-            <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">Invoice Date</span>
-            <span className="font-mono font-semibold text-black">{invoiceDetails.invoiceDate}</span>
+        ) : (
+          <div className="border-b border-gray-900 grid grid-cols-4 divide-x divide-gray-900 bg-gray-50/40 text-[10.5px]">
+            <div className="p-2">
+              <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">Invoice No</span>
+              <span className="font-mono font-bold text-black">{invoiceDetails.invoiceNo}</span>
+            </div>
+            <div className="p-2">
+              <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">Invoice Date</span>
+              <span className="font-mono font-semibold text-black">{invoiceDetails.invoiceDate}</span>
+            </div>
+            <div className="p-2">
+              <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">Challan No</span>
+              <span className="font-mono text-black">{invoiceDetails.challanNo || '—'}</span>
+            </div>
+            <div className="p-2 bg-amber-50/30">
+              <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">GST Type</span>
+              <span className="font-mono font-bold text-amber-900">
+                {invoiceDetails.gstType === 'INTRA_STATE' ? 'Intra-State (CGST+SGST)' : 'Inter-State (IGST)'}
+              </span>
+            </div>
           </div>
-          <div className="p-2">
-            <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">Challan No</span>
-            <span className="font-mono text-black">{invoiceDetails.challanNo || '—'}</span>
-          </div>
-          <div className="p-2 bg-amber-50/30">
-            <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">GST Type</span>
-            <span className="font-mono font-bold text-amber-900">
-              {invoiceDetails.gstType === 'INTRA_STATE' ? 'Intra-State (CGST+SGST)' : 'Inter-State (IGST)'}
-            </span>
-          </div>
-        </div>
+        )}
 
         {/* 4. TWO SIDE-BY-SIDE BOXES: BUYER & DELIVERY (2 Columns) */}
         <div className="border-b border-gray-900 grid grid-cols-2 divide-x divide-gray-900">
@@ -357,7 +386,9 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
           <div className="absolute -top-1 right-0 w-2 h-2 rounded-full bg-amber-600"></div>
         </div>
         <div className="text-center text-[8px] font-mono text-gray-500 uppercase tracking-widest">
-          Computer Generated Original Tax Invoice — K.S. TEX Atelier
+          {isDebitNote 
+            ? 'Computer Generated Original Debit Note — K.S. TEX Atelier' 
+            : 'Computer Generated Original Tax Invoice — K.S. TEX Atelier'}
         </div>
       </div>
 

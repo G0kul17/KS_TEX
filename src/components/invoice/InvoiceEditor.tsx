@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Invoice } from '../../types';
+import { Invoice, DocumentType } from '../../types';
 import { InvoiceForm } from './InvoiceForm';
 import { InvoicePreview } from './InvoicePreview';
 import { generateInvoicePdf, printInvoiceElement } from '../../lib/pdf';
@@ -15,23 +15,36 @@ import {
   X, 
   CheckCircle2, 
   Sparkles,
-  Loader2
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
 
 interface InvoiceEditorProps {
   initialInvoice?: Invoice | null;
+  defaultDocumentType?: DocumentType;
   onInvoiceSaved: () => void;
 }
 
-export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, onInvoiceSaved }) => {
+export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ 
+  initialInvoice, 
+  defaultDocumentType = 'invoice',
+  onInvoiceSaved 
+}) => {
   const { settings } = useTheme();
   const previewRef = useRef<HTMLDivElement | null>(null);
 
+  const activeDocType: DocumentType = initialInvoice?.documentType || defaultDocumentType;
+
   // Initialize new blank invoice structure
-  const createBlankInvoice = (): Invoice => {
-    const nextNo = getNextInvoiceNumber(settings.invoicePrefix || 'FY');
+  const createBlankInvoice = (docType: DocumentType = activeDocType): Invoice => {
+    const isDN = docType === 'debit_note';
+    const prefix = isDN ? (settings.debitNotePrefix || 'DN') : (settings.invoicePrefix || 'FY');
+    const nextNo = getNextInvoiceNumber(prefix, docType);
+    const today = new Date().toISOString().split('T')[0];
+
     return {
       id: `inv_${Date.now()}`,
+      documentType: docType,
       status: 'draft',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -40,13 +53,15 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
       termsConditions: settings.defaultTerms,
       invoiceDetails: {
         invoiceNo: nextNo,
-        invoiceDate: new Date().toISOString().split('T')[0],
+        invoiceDate: today,
         challanNo: '',
         agentName: 'Ramesh Shah & Sons',
         gstType: settings.defaultGstType || 'INTRA_STATE',
         cgstPercent: settings.defaultCgstPercent || 2.5,
         sgstPercent: settings.defaultSgstPercent || 2.5,
         igstPercent: settings.defaultIgstPercent || 5.0,
+        originalInvoiceNo: isDN ? '' : undefined,
+        returnDate: isDN ? today : undefined,
       },
       buyerDetails: {
         companyName: '',
@@ -71,7 +86,7 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
         transportGstin: '',
         vehicleNo: '',
         lrNo: '',
-        lrDate: new Date().toISOString().split('T')[0],
+        lrDate: today,
       },
       items: [
         {
@@ -113,11 +128,15 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [showConfirmReset, setShowConfirmReset] = useState(false);
   const [showMobilePreviewModal, setShowMobilePreviewModal] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  const isDebitNote = invoice.documentType === 'debit_note';
 
   // Reset form
   const handleResetForm = () => {
-    setInvoice(createBlankInvoice());
+    setInvoice(createBlankInvoice(isDebitNote ? 'debit_note' : 'invoice'));
     setShowConfirmReset(false);
+    setValidationError(null);
   };
 
   // Save as Draft
@@ -131,8 +150,44 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
     onInvoiceSaved();
   };
 
-  // Generate Finalized Invoice & PDF
+  // Validate document before finalization
+  const validateDocument = (): string | null => {
+    if (!invoice.buyerDetails.companyName.trim()) {
+      return 'Buyer / Party Company Name is required.';
+    }
+
+    if (isDebitNote) {
+      if (!invoice.invoiceDetails.originalInvoiceNo?.trim()) {
+        return 'Original Invoice No. is required for a Debit Note.';
+      }
+      if (!invoice.invoiceDetails.invoiceDate) {
+        return 'Original Invoice Date is required.';
+      }
+      const returnDate = invoice.invoiceDetails.returnDate || invoice.invoiceDetails.invoiceDate;
+      if (!returnDate) {
+        return 'Debit Date (Return Date) is required.';
+      }
+      if (returnDate < invoice.invoiceDetails.invoiceDate) {
+        return `Debit Date (Return Date: ${returnDate}) cannot be earlier than Original Invoice Date (${invoice.invoiceDetails.invoiceDate}).`;
+      }
+    } else {
+      if (!invoice.invoiceDetails.invoiceDate) {
+        return 'Invoice Date is required.';
+      }
+    }
+
+    return null;
+  };
+
+  // Generate Finalized Invoice / Debit Note & PDF
   const handleGeneratePdfAndFinalize = async () => {
+    const errorMsg = validateDocument();
+    if (errorMsg) {
+      setValidationError(errorMsg);
+      return;
+    }
+    setValidationError(null);
+
     setIsGeneratingPdf(true);
 
     const finalizedInvoice: Invoice = {
@@ -144,7 +199,8 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
     saveInvoice(finalizedInvoice);
 
     if (previewRef.current) {
-      const fileName = `KS_TEX_Invoice_${finalizedInvoice.invoiceDetails.invoiceNo}.pdf`;
+      const prefix = isDebitNote ? 'KS_TEX_DebitNote' : 'KS_TEX_Invoice';
+      const fileName = `${prefix}_${finalizedInvoice.invoiceDetails.invoiceNo}.pdf`;
       await generateInvoicePdf(previewRef.current, fileName);
     }
 
@@ -153,10 +209,13 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
     onInvoiceSaved();
   };
 
-  // Print Invoice
+  // Print Invoice / Debit Note
   const handlePrint = () => {
     if (previewRef.current) {
-      printInvoiceElement(previewRef.current);
+      const docTitle = isDebitNote 
+        ? `KS TEX — Print Debit Note #${invoice.invoiceDetails.invoiceNo}`
+        : `KS TEX — Print Invoice #${invoice.invoiceDetails.invoiceNo}`;
+      printInvoiceElement(previewRef.current, docTitle);
     }
   };
 
@@ -167,14 +226,19 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
       <div className="p-4 lg:p-6 pb-2 max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1720px] mx-auto flex items-center justify-between">
         <div>
           <h1 className="font-serif-display text-2xl lg:text-3xl font-bold text-[var(--text-primary)]">
-            Invoice Generator
+            {isDebitNote ? 'Debit Note Generator' : 'Invoice Generator'}
           </h1>
           <p className="text-xs text-[var(--text-muted)] mt-0.5">
-            Editing Invoice #{invoice.invoiceDetails.invoiceNo} — Live A4 Preview Active
+            Editing {isDebitNote ? 'Debit Note' : 'Invoice'} #{invoice.invoiceDetails.invoiceNo} — Live A4 Preview Active
           </p>
         </div>
 
         <div className="flex items-center space-x-2">
+          {isDebitNote && (
+            <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-[var(--accent-brass)]/15 text-[var(--accent-brass)] border border-[var(--accent-brass)]/30">
+              Debit Note
+            </span>
+          )}
           {invoice.status === 'finalized' ? (
             <span className="px-3 py-1 rounded-full text-xs font-mono font-medium bg-[var(--status-success)]/15 text-[var(--status-success)] border border-[var(--status-success)]/30">
               Finalized
@@ -191,6 +255,25 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
         <div className="thread-stitch"></div>
       </div>
 
+      {/* Validation Error Toast Alert if any */}
+      {validationError && (
+        <div className="px-4 lg:px-6 max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1720px] mx-auto mt-4">
+          <div className="p-4 rounded-xl bg-[var(--status-error)]/15 border border-[var(--status-error)]/40 text-[var(--status-error)] flex items-center justify-between shadow-lg">
+            <div className="flex items-center space-x-2.5 text-xs font-medium">
+              <AlertCircle className="w-5 h-5 shrink-0" />
+              <span><strong>Validation Required:</strong> {validationError}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setValidationError(null)}
+              className="p-1 text-[var(--status-error)] hover:opacity-80 cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Main Two-Column Layout */}
       <div className="p-4 lg:p-6 max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1720px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start">
         
@@ -198,7 +281,10 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
         <div className="lg:col-span-7 2xl:col-span-6 space-y-6">
           <InvoiceForm
             invoice={invoice}
-            onChange={setInvoice}
+            onChange={(updated) => {
+              setInvoice(updated);
+              if (validationError) setValidationError(null);
+            }}
             onReset={() => setShowConfirmReset(true)}
           />
         </div>
@@ -297,7 +383,7 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
         <div className="fixed inset-0 z-50 flex flex-col bg-[var(--bg-base)]">
           <div className="flex items-center justify-between px-4 py-3 bg-[var(--bg-surface)] border-b border-[var(--border-solid)]">
             <span className="font-serif-display font-bold text-sm text-[var(--text-primary)]">
-              A4 Invoice Preview
+              {isDebitNote ? 'A4 Debit Note Preview' : 'A4 Invoice Preview'}
             </span>
             <button
               type="button"
@@ -326,10 +412,10 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
 
             <div className="space-y-1">
               <h3 className="font-serif-display text-xl font-bold text-[var(--text-primary)]">
-                Invoice Generated & Saved to Cloud!
+                {isDebitNote ? 'Debit Note' : 'Invoice'} Generated & Saved to Cloud!
               </h3>
               <p className="text-xs text-[var(--text-muted)]">
-                Invoice #{invoice.invoiceDetails.invoiceNo} has been finalized and permanently stored in your Cloud Database. The PDF document has been downloaded.
+                {isDebitNote ? 'Debit Note' : 'Invoice'} #{invoice.invoiceDetails.invoiceNo} has been finalized and permanently stored in your Cloud Database. The PDF document has been downloaded.
               </p>
             </div>
 
@@ -353,10 +439,10 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({ initialInvoice, on
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
           <div className="w-full max-w-sm rounded-2xl bg-[var(--bg-surface)] p-6 border border-[var(--status-error)]/40 shadow-2xl space-y-4 text-center">
             <h3 className="font-serif-display text-lg font-bold text-[var(--text-primary)]">
-              Reset Invoice Fields?
+              Reset {isDebitNote ? 'Debit Note' : 'Invoice'} Fields?
             </h3>
             <p className="text-xs text-[var(--text-muted)]">
-              This will clear all current input fields and restore the blank template with the next auto-incrementing invoice number. Unsaved changes will be lost.
+              This will clear all current input fields and restore the blank template with the next auto-incrementing {isDebitNote ? 'debit note' : 'invoice'} number. Unsaved changes will be lost.
             </p>
             <div className="flex justify-center space-x-3 pt-2">
               <button

@@ -33,6 +33,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const draftInvoices = invoices.filter((i) => i.status === 'draft');
 
   const totalGenerated = finalizedInvoices.length;
+  const finalizedInvoicesOnly = finalizedInvoices.filter((i) => (i.documentType || 'invoice') === 'invoice').length;
+  const finalizedDebitNotesOnly = finalizedInvoices.filter((i) => i.documentType === 'debit_note').length;
   const totalDrafts = draftInvoices.length;
   const totalCustomers = customers.length;
 
@@ -41,7 +43,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   const netAmountThisMonth = finalizedInvoices
     .filter((inv) => {
-      const d = new Date(inv.invoiceDetails.invoiceDate);
+      const d = new Date(inv.invoiceDetails.returnDate || inv.invoiceDetails.invoiceDate);
       return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
     })
     .reduce((acc, inv) => acc + inv.totals.amountAfterTax, 0);
@@ -115,7 +117,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         
-        {/* Card 1: Invoices Generated */}
+        {/* Card 1: Documents Generated */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -124,7 +126,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         >
           <div className="flex items-center justify-between">
             <span className="text-xs uppercase font-mono tracking-wider text-[var(--text-muted)]">
-              Invoices Generated
+              Documents Generated
             </span>
             <div className="p-2.5 rounded-xl bg-[var(--accent-brass)]/10 text-[var(--accent-brass)]">
               <FileCheck className="w-5 h-5" />
@@ -134,8 +136,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <div className="font-serif-display text-3xl lg:text-4xl font-bold text-[var(--text-primary)]">
               {Math.round(countGenerated)}
             </div>
-            <div className="text-xs text-[var(--status-success)] mt-1 font-mono">
-              ✓ Verified & Archived
+            <div className="text-xs text-[var(--text-muted)] mt-1 font-mono flex items-center gap-1.5">
+              <span className="text-[var(--status-success)]">✓ {finalizedInvoicesOnly} invoices</span>
+              <span>·</span>
+              <span className="text-purple-400">{finalizedDebitNotesOnly} debit notes</span>
             </div>
           </div>
         </motion.div>
@@ -292,7 +296,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <table className="w-full text-left text-xs">
                 <thead className="bg-[var(--bg-surface-hover)] border-b border-[var(--border-solid)] text-[var(--text-muted)] uppercase font-mono tracking-wider">
                   <tr>
-                    <th className="px-5 py-3.5">Invoice No</th>
+                    <th className="px-5 py-3.5">Document No</th>
+                    <th className="px-5 py-3.5">Type</th>
                     <th className="px-5 py-3.5">Date</th>
                     <th className="px-5 py-3.5">Buyer Name</th>
                     <th className="px-5 py-3.5">State</th>
@@ -302,59 +307,84 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-hairline)] text-[var(--text-primary)]">
-                  {invoices.slice(0, 5).map((inv) => (
-                    <tr
-                      key={inv.id}
-                      className="hover:bg-[var(--bg-surface-hover)]/60 transition-colors group"
-                    >
-                      <td className="px-5 py-4 font-mono font-bold text-[var(--accent-brass)]">
-                        {inv.invoiceDetails.invoiceNo}
-                      </td>
-                      <td className="px-5 py-4 font-mono text-[var(--text-muted)]">
-                        {inv.invoiceDetails.invoiceDate}
-                      </td>
-                      <td className="px-5 py-4 font-medium max-w-xs truncate">
-                        {inv.buyerDetails.companyName || '—'}
-                      </td>
-                      <td className="px-5 py-4 text-[var(--text-muted)]">
-                        {inv.buyerDetails.state || 'Tamil Nadu'}
-                      </td>
-                      <td className="px-5 py-4">
-                        {inv.status === 'finalized' ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono font-medium bg-[var(--status-success)]/15 text-[var(--status-success)] border border-[var(--status-success)]/30">
-                            Finalized
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono font-medium bg-[var(--accent-terracotta)]/15 text-[var(--accent-terracotta)] border border-[var(--accent-terracotta)]/30">
-                            Draft
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-5 py-4 font-mono-num font-bold text-right text-[var(--text-primary)]">
-                        {formatCurrency(inv.totals.amountAfterTax)}
-                      </td>
-                      <td className="px-5 py-4 text-center">
-                        <div className="flex items-center justify-center space-x-2">
-                          <button
-                            type="button"
-                            onClick={() => onViewInvoice(inv)}
-                            className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] transition-colors cursor-pointer"
-                            title="Preview Invoice"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => onExportPdf(inv)}
-                            className="p-1.5 rounded-lg text-[var(--accent-brass)] hover:bg-[var(--accent-brass)]/15 transition-colors cursor-pointer"
-                            title="Export PDF"
-                          >
-                            <FileDown className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                  {invoices.slice(0, 5).map((inv) => {
+                    const isDN = inv.documentType === 'debit_note';
+                    const displayDate = isDN
+                      ? (inv.invoiceDetails.returnDate || inv.invoiceDetails.invoiceDate)
+                      : inv.invoiceDetails.invoiceDate;
+
+                    return (
+                      <tr
+                        key={inv.id}
+                        className="hover:bg-[var(--bg-surface-hover)]/60 transition-colors group"
+                      >
+                        <td className="px-5 py-4">
+                          <div className="font-mono font-bold text-[var(--accent-brass)]">
+                            {inv.invoiceDetails.invoiceNo}
+                          </div>
+                          {isDN && inv.invoiceDetails.originalInvoiceNo && (
+                            <div className="text-[10px] font-mono text-[var(--text-muted)] mt-0.5">
+                              Ref: #{inv.invoiceDetails.originalInvoiceNo}
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-5 py-4">
+                          {isDN ? (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-purple-500/15 text-purple-400 border border-purple-500/30">
+                              Debit Note
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-[var(--accent-brass)]/15 text-[var(--accent-brass)] border border-[var(--accent-brass)]/30">
+                              Tax Invoice
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4 font-mono text-[var(--text-muted)]">
+                          {displayDate}
+                        </td>
+                        <td className="px-5 py-4 font-medium max-w-xs truncate">
+                          {inv.buyerDetails.companyName || '—'}
+                        </td>
+                        <td className="px-5 py-4 text-[var(--text-muted)]">
+                          {inv.buyerDetails.state || 'Tamil Nadu'}
+                        </td>
+                        <td className="px-5 py-4">
+                          {inv.status === 'finalized' ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono font-medium bg-[var(--status-success)]/15 text-[var(--status-success)] border border-[var(--status-success)]/30">
+                              Finalized
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono font-medium bg-[var(--accent-terracotta)]/15 text-[var(--accent-terracotta)] border border-[var(--accent-terracotta)]/30">
+                              Draft
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4 font-mono-num font-bold text-right text-[var(--text-primary)]">
+                          {formatCurrency(inv.totals.amountAfterTax)}
+                        </td>
+                        <td className="px-5 py-4 text-center">
+                          <div className="flex items-center justify-center space-x-2">
+                            <button
+                              type="button"
+                              onClick={() => onViewInvoice(inv)}
+                              className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] transition-colors cursor-pointer"
+                              title="Preview Document"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => onExportPdf(inv)}
+                              className="p-1.5 rounded-lg text-[var(--accent-brass)] hover:bg-[var(--accent-brass)]/15 transition-colors cursor-pointer"
+                              title="Export PDF"
+                            >
+                              <FileDown className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

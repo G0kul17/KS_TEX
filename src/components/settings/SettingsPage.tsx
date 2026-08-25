@@ -313,7 +313,7 @@ export const SettingsPage: React.FC = () => {
             </h3>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">
                 Invoice Prefix
@@ -331,6 +331,22 @@ export const SettingsPage: React.FC = () => {
             </div>
 
             <div>
+              <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">
+                Debit Note Prefix
+              </label>
+              <div className="relative">
+                <Hash className="w-3.5 h-3.5 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={formSettings.debitNotePrefix || 'DN'}
+                  onChange={(e) => setFormSettings({ ...formSettings, debitNotePrefix: e.target.value })}
+                  className="w-full pl-8 pr-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono uppercase text-xs outline-none focus:border-[var(--accent-brass)]"
+                  placeholder="e.g. DN"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
               <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">
                 Default GST Structure
               </label>

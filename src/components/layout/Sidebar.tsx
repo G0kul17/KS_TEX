@@ -2,6 +2,7 @@ import React from 'react';
 import { 
   LayoutDashboard, 
   FilePlus, 
+  FileDiff,
   History, 
   FileClock, 
   Users, 
@@ -9,7 +10,7 @@ import {
   X
 } from 'lucide-react';
 
-export type ActiveTab = 'dashboard' | 'generate' | 'history' | 'drafts' | 'customers' | 'settings';
+export type ActiveTab = 'dashboard' | 'generate' | 'generate_debit_note' | 'history' | 'drafts' | 'customers' | 'settings';
 
 interface SidebarProps {
   activeTab: ActiveTab;
@@ -36,7 +37,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const navItems: NavItem[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'generate', label: 'Generate Invoice', icon: FilePlus },
-    { id: 'history', label: 'Invoice History', icon: History },
+    { id: 'generate_debit_note', label: 'Generate Debit Note', icon: FileDiff },
+    { id: 'history', label: 'Document History', icon: History },
     { id: 'drafts', label: 'Draft Bills', icon: FileClock, badge: draftCount },
     { id: 'customers', label: 'Customers', icon: Users },
     { id: 'settings', label: 'Settings', icon: SettingsIcon },

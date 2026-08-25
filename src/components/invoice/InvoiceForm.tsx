@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Invoice, GoodsItem, GstType, GradeType } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { numberToWordsIndian } from '../../lib/numberToWords';
-import { BRAND_LOGO_DEFAULT } from '../../lib/storage';
+import { BRAND_LOGO_DEFAULT, getStoredInvoices } from '../../lib/storage';
 import { 
   Building2, 
   FileText, 
+  FileDiff,
   UserCheck, 
   Truck, 
   Package, 
@@ -20,7 +21,12 @@ import {
   Upload, 
   RotateCcw,
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  AlertCircle,
+  Search,
+  ChevronDown,
+  Link2,
+  Check
 } from 'lucide-react';
 
 interface InvoiceFormProps {
@@ -39,6 +45,56 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
   const [newShadeNo, setNewShadeNo] = useState('');
   const [newShadeColor, setNewShadeColor] = useState('#C6A15B');
   const [showAddShadeModal, setShowAddShadeModal] = useState(false);
+
+  // Searchable original invoice selector for Debit Notes
+  const [isInvoicePickerOpen, setIsInvoicePickerOpen] = useState(false);
+  const [invoiceSearchQuery, setInvoiceSearchQuery] = useState('');
+
+  const isDebitNote = invoice.documentType === 'debit_note';
+  const isDateOrderInvalid = isDebitNote && Boolean(
+    invoice.invoiceDetails.invoiceDate &&
+    invoice.invoiceDetails.returnDate &&
+    invoice.invoiceDetails.returnDate < invoice.invoiceDetails.invoiceDate
+  );
+  const isMissingOriginalInvoice = isDebitNote && !invoice.invoiceDetails.originalInvoiceNo?.trim();
+
+  // Search through existing finalized and draft invoices to link
+  const storedInvoices = getStoredInvoices();
+  const selectableInvoices = storedInvoices.filter(
+    (inv) => (inv.documentType || 'invoice') === 'invoice' || !inv.invoiceDetails.invoiceNo.startsWith('DN')
+  );
+  const filteredSelectableInvoices = selectableInvoices.filter((inv) => {
+    const q = invoiceSearchQuery.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      inv.invoiceDetails.invoiceNo.toLowerCase().includes(q) ||
+      inv.buyerDetails.companyName.toLowerCase().includes(q) ||
+      inv.buyerDetails.gstin.toLowerCase().includes(q)
+    );
+  });
+
+  const handleSelectOriginalInvoice = (selectedInv: Invoice) => {
+    const updatedDetails = {
+      ...invoice.invoiceDetails,
+      originalInvoiceNo: selectedInv.invoiceDetails.invoiceNo,
+      invoiceDate: selectedInv.invoiceDetails.invoiceDate,
+      gstType: selectedInv.invoiceDetails.gstType,
+      cgstPercent: selectedInv.invoiceDetails.cgstPercent,
+      sgstPercent: selectedInv.invoiceDetails.sgstPercent,
+      igstPercent: selectedInv.invoiceDetails.igstPercent,
+    };
+
+    const updated: Invoice = {
+      ...invoice,
+      invoiceDetails: updatedDetails,
+      buyerDetails: { ...selectedInv.buyerDetails },
+      deliveryDetails: { ...selectedInv.deliveryDetails },
+    };
+
+    recalculateTotals(updated);
+    setIsInvoicePickerOpen(false);
+    setInvoiceSearchQuery('');
+  };
 
   // Helper to trigger state updates
   const updateInvoiceState = (field: keyof Invoice, value: any) => {
@@ -367,46 +423,260 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
         </div>
       </div>
 
-      {/* 2. INVOICE DETAILS CARD */}
+      {/* 2. DOCUMENT DETAILS / INVOICE DETAILS CARD */}
       <div className="p-5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-solid)] shadow-[var(--shadow-warm)] space-y-4">
-        <div className="flex items-center space-x-2.5 border-b border-[var(--border-hairline)] pb-3">
-          <FileText className="w-4 h-4 text-[var(--accent-brass)]" />
-          <h3 className="font-serif-display font-semibold text-base text-[var(--text-primary)]">
-            2. Invoice Details
-          </h3>
+        <div className="flex items-center justify-between border-b border-[var(--border-hairline)] pb-3">
+          <div className="flex items-center space-x-2.5">
+            {isDebitNote ? (
+              <FileDiff className="w-4 h-4 text-[var(--accent-brass)]" />
+            ) : (
+              <FileText className="w-4 h-4 text-[var(--accent-brass)]" />
+            )}
+            <h3 className="font-serif-display font-semibold text-base text-[var(--text-primary)]">
+              {isDebitNote ? '2. Debit Note Meta & Adjustment Details' : '2. Invoice Details'}
+            </h3>
+          </div>
+
+          {isDebitNote && (
+            <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-[var(--accent-brass)]/15 text-[var(--accent-brass)] border border-[var(--accent-brass)]/30 font-semibold">
+              Debit Note Mode
+            </span>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div>
-            <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">Invoice Number</label>
-            <input
-              type="text"
-              value={invoice.invoiceDetails.invoiceNo}
-              onChange={(e) => updateSubSection('invoiceDetails', 'invoiceNo', e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--accent-brass)] font-mono font-bold focus:border-[var(--accent-brass)] outline-none"
-            />
-          </div>
+        {isDebitNote ? (
+          /* DEBIT NOTE SPECIFIC META FIELDS */
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              
+              {/* Debit Note Number */}
+              <div>
+                <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">
+                  Debit Note Number
+                </label>
+                <input
+                  type="text"
+                  value={invoice.invoiceDetails.invoiceNo}
+                  onChange={(e) => updateSubSection('invoiceDetails', 'invoiceNo', e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--accent-brass)] font-mono font-bold focus:border-[var(--accent-brass)] outline-none"
+                  placeholder="e.g. DN001"
+                />
+              </div>
 
-          <div>
-            <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">Invoice Date</label>
-            <input
-              type="date"
-              value={invoice.invoiceDetails.invoiceDate}
-              onChange={(e) => updateSubSection('invoiceDetails', 'invoiceDate', e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
-            />
-          </div>
+              {/* Original Invoice Number (Manual Entry or History Picker) */}
+              <div className="relative">
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-mono text-[var(--text-muted)]">
+                    Original Bill / Invoice No. <span className="text-[var(--status-error)]">*</span>
+                  </label>
+                  {selectableInvoices.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setIsInvoicePickerOpen(!isInvoicePickerOpen)}
+                      className="text-[10px] font-mono text-[var(--accent-brass)] hover:underline flex items-center gap-1 cursor-pointer bg-[var(--accent-brass)]/10 px-2 py-0.5 rounded"
+                    >
+                      <Search className="w-3 h-3" />
+                      <span>{isInvoicePickerOpen ? 'Close' : 'From History'}</span>
+                    </button>
+                  )}
+                </div>
 
-          <div>
-            <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">Challan Number</label>
-            <input
-              type="text"
-              value={invoice.invoiceDetails.challanNo}
-              onChange={(e) => updateSubSection('invoiceDetails', 'challanNo', e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
-            />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={invoice.invoiceDetails.originalInvoiceNo || ''}
+                    onChange={(e) => updateSubSection('invoiceDetails', 'originalInvoiceNo', e.target.value)}
+                    placeholder="Enter bill / invoice number..."
+                    className={`w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border text-[var(--text-primary)] font-mono font-bold text-xs focus:border-[var(--accent-brass)] outline-none ${
+                      isMissingOriginalInvoice
+                        ? 'border-[var(--status-error)]/60 bg-[var(--status-error)]/5'
+                        : 'border-[var(--border-solid)]'
+                    }`}
+                  />
+                  {selectableInvoices.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setIsInvoicePickerOpen(!isInvoicePickerOpen)}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[var(--text-muted)] hover:text-[var(--accent-brass)] cursor-pointer"
+                      title="Choose from past invoices in system"
+                    >
+                      <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isInvoicePickerOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Dropdown Popover for Searchable History */}
+                {isInvoicePickerOpen && (
+                  <div className="absolute left-0 right-0 top-full mt-1.5 z-40 bg-[var(--bg-surface)] rounded-xl border border-[var(--accent-brass)]/40 shadow-2xl p-2.5 space-y-2 max-h-64 overflow-y-auto">
+                    <div className="text-[10px] font-mono text-[var(--text-muted)] uppercase flex items-center justify-between pb-1 border-b border-[var(--border-hairline)]">
+                      <span>Pick from Past Invoices</span>
+                      <button 
+                        type="button" 
+                        onClick={() => setIsInvoicePickerOpen(false)}
+                        className="hover:text-[var(--text-primary)] cursor-pointer"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <div className="relative">
+                      <Search className="w-3.5 h-3.5 text-[var(--text-muted)] absolute left-2.5 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={invoiceSearchQuery}
+                        onChange={(e) => setInvoiceSearchQuery(e.target.value)}
+                        placeholder="Search bill # or buyer name..."
+                        className="w-full pl-8 pr-2 py-1.5 rounded-lg bg-[var(--bg-base)] border border-[var(--border-hairline)] text-xs text-[var(--text-primary)] focus:border-[var(--accent-brass)] outline-none"
+                        autoFocus
+                      />
+                    </div>
+
+                    <div className="divide-y divide-[var(--border-hairline)] max-h-44 overflow-y-auto">
+                      {filteredSelectableInvoices.length === 0 ? (
+                        <div className="p-3 text-center text-xs text-[var(--text-muted)] italic">
+                          No matching invoices found in history. You can directly type the bill number in the box above.
+                        </div>
+                      ) : (
+                        filteredSelectableInvoices.map((inv) => (
+                          <button
+                            type="button"
+                            key={inv.id}
+                            onClick={() => handleSelectOriginalInvoice(inv)}
+                            className="w-full p-2 text-left rounded-lg hover:bg-[var(--bg-surface-hover)] transition-colors flex items-center justify-between text-xs cursor-pointer group"
+                          >
+                            <div className="space-y-0.5">
+                              <div className="font-mono font-bold text-[var(--accent-brass)] flex items-center gap-1.5">
+                                <Link2 className="w-3 h-3 text-[var(--text-muted)] group-hover:text-[var(--accent-brass)]" />
+                                <span>{inv.invoiceDetails.invoiceNo}</span>
+                                <span className="text-[10px] font-normal text-[var(--text-muted)]">
+                                  ({inv.invoiceDetails.invoiceDate})
+                                </span>
+                              </div>
+                              <div className="text-[11px] text-[var(--text-primary)] font-medium truncate max-w-[200px]">
+                                {inv.buyerDetails.companyName || 'Unspecified Buyer'}
+                              </div>
+                            </div>
+                            <div className="text-right font-mono text-[11px] font-semibold text-[var(--text-muted)]">
+                              ₹{inv.totals.amountAfterTax.toFixed(0)}
+                            </div>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Original Invoice Date */}
+              <div>
+                <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">
+                  Original Invoice Date <span className="text-[var(--status-error)]">*</span>
+                </label>
+                <input
+                  type="date"
+                  value={invoice.invoiceDetails.invoiceDate}
+                  onChange={(e) => updateSubSection('invoiceDetails', 'invoiceDate', e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
+                />
+              </div>
+
+              {/* Debit Date (Return Date) */}
+              <div>
+                <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">
+                  Debit Date (Return Date) <span className="text-[var(--status-error)]">*</span>
+                </label>
+                <input
+                  type="date"
+                  value={invoice.invoiceDetails.returnDate || invoice.invoiceDetails.invoiceDate}
+                  onChange={(e) => updateSubSection('invoiceDetails', 'returnDate', e.target.value)}
+                  className={`w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border font-mono focus:border-[var(--accent-brass)] outline-none ${
+                    isDateOrderInvalid
+                      ? 'border-[var(--status-error)] text-[var(--status-error)] bg-[var(--status-error)]/5'
+                      : 'border-[var(--border-solid)] text-[var(--text-primary)]'
+                  }`}
+                />
+              </div>
+
+            </div>
+
+            {/* Secondary Row: Challan & Agent */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">Challan Number</label>
+                <input
+                  type="text"
+                  value={invoice.invoiceDetails.challanNo}
+                  onChange={(e) => updateSubSection('invoiceDetails', 'challanNo', e.target.value)}
+                  placeholder="Optional reference"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">Agent / Broker</label>
+                <input
+                  type="text"
+                  value={invoice.invoiceDetails.agentName}
+                  onChange={(e) => updateSubSection('invoiceDetails', 'agentName', e.target.value)}
+                  placeholder="e.g. Ramesh Shah & Sons"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] focus:border-[var(--accent-brass)] outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Validation Alerts */}
+            {isDateOrderInvalid && (
+              <div className="p-3 rounded-xl bg-[var(--status-error)]/10 border border-[var(--status-error)]/30 text-[var(--status-error)] text-xs flex items-center space-x-2 animate-pulse">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>
+                  <strong>Invalid Return Date:</strong> Debit Date (Return Date: {invoice.invoiceDetails.returnDate}) cannot be earlier than Original Invoice Date ({invoice.invoiceDetails.invoiceDate}). Goods cannot be returned before they were billed.
+                </span>
+              </div>
+            )}
+
+            {isMissingOriginalInvoice && (
+              <div className="p-2.5 rounded-xl bg-[var(--accent-terracotta)]/10 border border-[var(--accent-terracotta)]/30 text-[var(--accent-terracotta)] text-xs flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>
+                  <strong>Original Bill Number:</strong> Please type the original purchase / supplier invoice number being adjusted in the box above.
+                </span>
+              </div>
+            )}
           </div>
-        </div>
+        ) : (
+          /* STANDARD TAX INVOICE META FIELDS */
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">Invoice Number</label>
+              <input
+                type="text"
+                value={invoice.invoiceDetails.invoiceNo}
+                onChange={(e) => updateSubSection('invoiceDetails', 'invoiceNo', e.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--accent-brass)] font-mono font-bold focus:border-[var(--accent-brass)] outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">Invoice Date</label>
+              <input
+                type="date"
+                value={invoice.invoiceDetails.invoiceDate}
+                onChange={(e) => updateSubSection('invoiceDetails', 'invoiceDate', e.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">Challan Number</label>
+              <input
+                type="text"
+                value={invoice.invoiceDetails.challanNo}
+                onChange={(e) => updateSubSection('invoiceDetails', 'challanNo', e.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 3. BUYER DETAILS & DELIVERY DETAILS CARD */}

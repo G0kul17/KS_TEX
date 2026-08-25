@@ -82,69 +82,89 @@ export const DraftBills: React.FC<DraftBillsProps> = ({
       ) : (
         /* Draft Cards Grid */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-          {drafts.map((draft) => (
-            <div
-              key={draft.id}
-              className="p-5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-solid)] shadow-[var(--shadow-warm)] hover:border-[var(--accent-brass)]/50 transition-all flex flex-col justify-between space-y-4 group"
-            >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-sm font-bold text-[var(--accent-brass)]">
-                    {draft.invoiceDetails.invoiceNo}
-                  </span>
-                  <span className="text-[10px] font-mono text-[var(--text-muted)] flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    <span>{formatDate(draft.updatedAt)}</span>
-                  </span>
-                </div>
-
-                <div className="space-y-1">
-                  <div className="text-xs text-[var(--text-muted)] uppercase font-mono">Buyer</div>
-                  <div className="font-serif-display font-semibold text-base text-[var(--text-primary)] truncate flex items-center gap-2">
-                    <User className="w-4 h-4 text-[var(--accent-brass)] shrink-0" />
-                    <span>{draft.buyerDetails.companyName || 'Unspecified Buyer'}</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 text-xs font-mono text-[var(--text-muted)] pt-2 border-t border-[var(--border-hairline)]">
-                  <div>
-                    <span className="block text-[10px] uppercase">Items</span>
-                    <span className="text-[var(--text-primary)] font-semibold flex items-center gap-1 mt-0.5">
-                      <Package className="w-3 h-3 text-[var(--accent-brass)]" />
-                      {draft.items.length} Yarn Rows
+          {drafts.map((draft) => {
+            const isDN = draft.documentType === 'debit_note';
+            return (
+              <div
+                key={draft.id}
+                className="p-5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-solid)] shadow-[var(--shadow-warm)] hover:border-[var(--accent-brass)]/50 transition-all flex flex-col justify-between space-y-4 group"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="font-mono text-sm font-bold text-[var(--accent-brass)]">
+                        {draft.invoiceDetails.invoiceNo}
+                      </span>
+                      {isDN ? (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-purple-500/15 text-purple-400 border border-purple-500/30">
+                          Debit Note
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-[var(--accent-brass)]/15 text-[var(--accent-brass)] border border-[var(--accent-brass)]/30">
+                          Invoice
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[10px] font-mono text-[var(--text-muted)] flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>{formatDate(draft.updatedAt)}</span>
                     </span>
                   </div>
-                  <div>
-                    <span className="block text-[10px] uppercase">Subtotal</span>
-                    <span className="text-[var(--text-primary)] font-semibold mt-0.5 block">
-                      {formatCurrency(draft.totals.amountAfterTax)}
-                    </span>
+
+                  {isDN && draft.invoiceDetails.originalInvoiceNo && (
+                    <div className="text-[11px] font-mono text-[var(--accent-brass)] bg-[var(--accent-brass)]/10 px-2.5 py-1 rounded-lg border border-[var(--accent-brass)]/20">
+                      Adjusting Bill: <strong>#{draft.invoiceDetails.originalInvoiceNo}</strong>
+                    </div>
+                  )}
+
+                  <div className="space-y-1">
+                    <div className="text-xs text-[var(--text-muted)] uppercase font-mono">Buyer</div>
+                    <div className="font-serif-display font-semibold text-base text-[var(--text-primary)] truncate flex items-center gap-2">
+                      <User className="w-4 h-4 text-[var(--accent-brass)] shrink-0" />
+                      <span>{draft.buyerDetails.companyName || 'Unspecified Buyer'}</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs font-mono text-[var(--text-muted)] pt-2 border-t border-[var(--border-hairline)]">
+                    <div>
+                      <span className="block text-[10px] uppercase">Items</span>
+                      <span className="text-[var(--text-primary)] font-semibold flex items-center gap-1 mt-0.5">
+                        <Package className="w-3 h-3 text-[var(--accent-brass)]" />
+                        {draft.items.length} Yarn Rows
+                      </span>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] uppercase">Subtotal</span>
+                      <span className="text-[var(--text-primary)] font-semibold mt-0.5 block">
+                        {formatCurrency(draft.totals.amountAfterTax)}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center justify-between pt-2 border-t border-[var(--border-hairline)]">
-                <button
-                  type="button"
-                  onClick={() => setDeleteConfirmId(draft.id)}
-                  className="p-2 rounded-lg text-[var(--status-error)] hover:bg-[var(--status-error)]/10 text-xs font-mono flex items-center space-x-1 cursor-pointer transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  <span>Delete</span>
-                </button>
+                {/* Action Buttons */}
+                <div className="flex items-center justify-between pt-2 border-t border-[var(--border-hairline)]">
+                  <button
+                    type="button"
+                    onClick={() => setDeleteConfirmId(draft.id)}
+                    className="p-2 rounded-lg text-[var(--status-error)] hover:bg-[var(--status-error)]/10 text-xs font-mono flex items-center space-x-1 cursor-pointer transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>Delete</span>
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => onResumeDraft(draft)}
-                  className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-xs font-bold hover:bg-[#d4b068] cursor-pointer transition-colors"
-                >
-                  <Play className="w-3.5 h-3.5 fill-current" />
-                  <span>Resume Editing</span>
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => onResumeDraft(draft)}
+                    className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[var(--accent-brass)] text-[#15130f] text-xs font-bold hover:bg-[#d4b068] cursor-pointer transition-colors"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-current" />
+                    <span>Resume Editing</span>
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

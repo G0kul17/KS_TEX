@@ -50,29 +50,46 @@ export function AppContent() {
     setActiveTab('generate');
   };
 
+  const handleNavigateToGenerateDebitNote = () => {
+    setSelectedInvoiceForEdit(null);
+    setActiveTab('generate_debit_note');
+  };
+
   const handleOpenInvoice = (invoice: Invoice) => {
     setSelectedInvoiceForEdit(invoice);
-    setActiveTab('generate');
+    if (invoice.documentType === 'debit_note') {
+      setActiveTab('generate_debit_note');
+    } else {
+      setActiveTab('generate');
+    }
   };
 
   const handleDuplicateInvoice = (invoice: Invoice) => {
-    const nextNo = getNextInvoiceNumber('FY');
+    const isDN = invoice.documentType === 'debit_note';
+    const settings = getStoredSettings();
+    const prefix = isDN ? (settings.debitNotePrefix || 'DN') : (settings.invoicePrefix || 'FY');
+    const nextNo = getNextInvoiceNumber(prefix, isDN ? 'debit_note' : 'invoice');
+    const today = new Date().toISOString().split('T')[0];
+
     const duplicated: Invoice = {
       ...invoice,
       id: `inv_${Date.now()}`,
+      documentType: isDN ? 'debit_note' : 'invoice',
       status: 'draft',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       invoiceDetails: {
         ...invoice.invoiceDetails,
         invoiceNo: nextNo,
-        invoiceDate: new Date().toISOString().split('T')[0],
+        invoiceDate: isDN ? invoice.invoiceDetails.invoiceDate : today,
+        returnDate: isDN ? (invoice.invoiceDetails.returnDate || today) : undefined,
+        originalInvoiceNo: isDN ? (invoice.invoiceDetails.originalInvoiceNo || '') : undefined,
       },
     };
     saveInvoice(duplicated);
     refreshData();
     setSelectedInvoiceForEdit(duplicated);
-    setActiveTab('generate');
+    setActiveTab(isDN ? 'generate_debit_note' : 'generate');
   };
 
   const handleDeleteInvoice = (id: string) => {
@@ -96,8 +113,12 @@ export function AppContent() {
     const root = createRoot(hiddenDiv);
     root.render(<InvoicePreview invoice={invoice} />);
 
+    const isDN = invoice.documentType === 'debit_note';
+    const docPrefix = isDN ? 'KS_TEX_DebitNote' : 'KS_TEX_Invoice';
+    const fileName = `${docPrefix}_${invoice.invoiceDetails.invoiceNo}.pdf`;
+
     setTimeout(async () => {
-      await generateInvoicePdf(hiddenDiv, `KS_TEX_Invoice_${invoice.invoiceDetails.invoiceNo}.pdf`);
+      await generateInvoicePdf(hiddenDiv, fileName);
       root.unmount();
       document.body.removeChild(hiddenDiv);
     }, 300);
@@ -105,7 +126,7 @@ export function AppContent() {
 
   const handleCreateInvoiceForCustomer = (customer: Customer) => {
     const settings = getStoredSettings();
-    const nextNo = getNextInvoiceNumber(settings.invoicePrefix || 'FY');
+    const nextNo = getNextInvoiceNumber(settings.invoicePrefix || 'FY', 'invoice');
     const defaultItem = {
       id: `item_${Date.now()}`,
       srNo: 1,
@@ -125,6 +146,7 @@ export function AppContent() {
     };
     const newInvoice: Invoice = {
       id: `inv_${Date.now()}`,
+      documentType: 'invoice',
       status: 'draft',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -197,7 +219,7 @@ export function AppContent() {
           activeTab={activeTab}
           onTabChange={(tab) => {
             setActiveTab(tab);
-            if (tab === 'generate' && activeTab !== 'generate') {
+            if ((tab === 'generate' || tab === 'generate_debit_note') && activeTab !== tab) {
               setSelectedInvoiceForEdit(null);
             }
           }}
@@ -220,7 +242,19 @@ export function AppContent() {
 
           {activeTab === 'generate' && (
             <InvoiceEditor
-              key={selectedInvoiceForEdit?.id || 'new_editor'}
+              key={selectedInvoiceForEdit?.id || 'new_invoice_editor'}
+              defaultDocumentType="invoice"
+              initialInvoice={selectedInvoiceForEdit}
+              onInvoiceSaved={() => {
+                refreshData();
+              }}
+            />
+          )}
+
+          {activeTab === 'generate_debit_note' && (
+            <InvoiceEditor
+              key={selectedInvoiceForEdit?.id || 'new_debit_note_editor'}
+              defaultDocumentType="debit_note"
               initialInvoice={selectedInvoiceForEdit}
               onInvoiceSaved={() => {
                 refreshData();

@@ -1,4 +1,4 @@
-import { AppSettings, Customer, Invoice } from '../types';
+import { AppSettings, Customer, Invoice, DocumentType } from '../types';
 import { numberToWordsIndian } from './numberToWords';
 import { KS_BRAND_LOGO_BASE64 } from '../assets/ksLogo';
 import { db } from './firebase';
@@ -24,6 +24,7 @@ const SETTINGS_DOC_ID = 'app_settings';
 export const DEFAULT_SETTINGS: AppSettings = {
   theme: 'atelier-noir',
   invoicePrefix: 'FY',
+  debitNotePrefix: 'DN',
   defaultGstType: 'INTRA_STATE',
   defaultCgstPercent: 2.5,
   defaultSgstPercent: 2.5,
@@ -109,6 +110,10 @@ export function normalizeLogoUrl(url?: string | null): string {
 // Clean and normalize invoice object
 export function sanitizeInvoice(inv: Invoice): Invoice {
   let updated = { ...inv };
+  if (!updated.documentType) {
+    updated.documentType = updated.invoiceDetails?.invoiceNo?.startsWith('DN') ? 'debit_note' : 'invoice';
+  }
+
   if (
     !updated.companyDetails?.gstin ||
     updated.companyDetails.gstin === '24AAFCK1234F1Z9' ||
@@ -167,7 +172,14 @@ export function getStoredSettings(): AppSettings {
         bankDetails = DEFAULT_SETTINGS.defaultBankDetails;
       }
 
-      return { ...DEFAULT_SETTINGS, ...parsed, defaultCompanyDetails: companyDetails, defaultBankDetails: bankDetails, shadeOptions };
+      return { 
+        ...DEFAULT_SETTINGS, 
+        debitNotePrefix: parsed.debitNotePrefix || 'DN',
+        ...parsed, 
+        defaultCompanyDetails: companyDetails, 
+        defaultBankDetails: bankDetails, 
+        shadeOptions 
+      };
     }
   } catch (e) {
     console.error('Failed to load settings from storage', e);
@@ -274,11 +286,15 @@ export function deleteInvoice(id: string): void {
   }
 }
 
-export function getNextInvoiceNumber(prefix: string = 'FY'): string {
+export function getNextInvoiceNumber(prefix: string = 'FY', documentType: DocumentType = 'invoice'): string {
   const invoices = getStoredInvoices();
   let maxNum = 0;
   
   for (const inv of invoices) {
+    const isTargetType = inv.documentType === documentType || 
+      (documentType === 'debit_note' ? inv.invoiceDetails.invoiceNo.startsWith('DN') : !inv.invoiceDetails.invoiceNo.startsWith('DN'));
+    if (!isTargetType) continue;
+
     const invNo = inv.invoiceDetails.invoiceNo;
     const match = invNo.match(/\d+/);
     if (match) {
@@ -292,6 +308,12 @@ export function getNextInvoiceNumber(prefix: string = 'FY'): string {
   const nextNum = maxNum + 1;
   const padded = nextNum.toString().padStart(3, '0');
   return `${prefix}${padded}`;
+}
+
+export function getNextDocumentNumber(documentType: DocumentType = 'invoice', customPrefix?: string): string {
+  const settings = getStoredSettings();
+  const prefix = customPrefix || (documentType === 'debit_note' ? settings.debitNotePrefix || 'DN' : settings.invoicePrefix || 'FY');
+  return getNextInvoiceNumber(prefix, documentType);
 }
 
 export function getCustomersFromInvoices(): Customer[] {

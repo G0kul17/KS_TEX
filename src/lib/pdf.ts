@@ -349,7 +349,7 @@ export async function generateInvoicePdf(
 /**
  * Trigger native print dialog for the invoice element.
  */
-export function printInvoiceElement(element: HTMLElement): void {
+export function printInvoiceElement(element: HTMLElement, title: string = 'KS TEX — Print Invoice'): void {
   try {
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
@@ -365,7 +365,7 @@ export function printInvoiceElement(element: HTMLElement): void {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>KS TEX — Print Invoice</title>
+          <title>${title}</title>
           ${styles}
           <style>
             body {
