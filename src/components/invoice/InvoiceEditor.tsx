@@ -53,7 +53,8 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({
       termsConditions: settings.defaultTerms,
       invoiceDetails: {
         invoiceNo: nextNo,
-        invoiceDate: today,
+        invoiceDate: isDN ? '' : today,
+        includeInvoiceDate: false,
         challanNo: '',
         agentName: 'Ramesh Shah & Sons',
         gstType: settings.defaultGstType || 'INTRA_STATE',
@@ -160,14 +161,15 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({
       if (!invoice.invoiceDetails.originalInvoiceNo?.trim()) {
         return 'Original Invoice No. is required for a Debit Note.';
       }
-      if (!invoice.invoiceDetails.invoiceDate) {
-        return 'Original Invoice Date is required.';
-      }
-      const returnDate = invoice.invoiceDetails.returnDate || invoice.invoiceDetails.invoiceDate;
+      const returnDate = invoice.invoiceDetails.returnDate || new Date().toISOString().split('T')[0];
       if (!returnDate) {
         return 'Debit Date (Return Date) is required.';
       }
-      if (returnDate < invoice.invoiceDetails.invoiceDate) {
+      if (
+        invoice.invoiceDetails.includeInvoiceDate &&
+        invoice.invoiceDetails.invoiceDate &&
+        returnDate < invoice.invoiceDetails.invoiceDate
+      ) {
         return `Debit Date (Return Date: ${returnDate}) cannot be earlier than Original Invoice Date (${invoice.invoiceDetails.invoiceDate}).`;
       }
     } else {

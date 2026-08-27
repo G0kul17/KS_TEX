@@ -81,7 +81,8 @@ export function AppContent() {
       invoiceDetails: {
         ...invoice.invoiceDetails,
         invoiceNo: nextNo,
-        invoiceDate: isDN ? invoice.invoiceDetails.invoiceDate : today,
+        invoiceDate: isDN ? (invoice.invoiceDetails.invoiceDate || '') : today,
+        includeInvoiceDate: isDN ? Boolean(invoice.invoiceDetails.includeInvoiceDate) : undefined,
         returnDate: isDN ? (invoice.invoiceDetails.returnDate || today) : undefined,
         originalInvoiceNo: isDN ? (invoice.invoiceDetails.originalInvoiceNo || '') : undefined,
       },

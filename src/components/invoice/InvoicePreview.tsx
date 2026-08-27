@@ -97,7 +97,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
 
         {/* 3. DOCUMENT META ROW */}
         {isDebitNote ? (
-          <div className="border-b border-gray-900 grid grid-cols-5 divide-x divide-gray-900 bg-gray-50/40 text-[10px]">
+          <div className={`border-b border-gray-900 grid ${invoiceDetails.includeInvoiceDate && invoiceDetails.invoiceDate ? 'grid-cols-5' : 'grid-cols-4'} divide-x divide-gray-900 bg-gray-50/40 text-[10px]`}>
             <div className="p-2 min-h-[48px] flex flex-col justify-between">
               <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold leading-tight">Debit Note No</span>
               <span className="font-mono font-bold text-black text-[10px] break-words">{invoiceDetails.invoiceNo}</span>
@@ -106,13 +106,15 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
               <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold leading-tight">Original Invoice No</span>
               <span className="font-mono font-bold text-black text-[10px] break-words">{invoiceDetails.originalInvoiceNo || '—'}</span>
             </div>
-            <div className="p-2 min-h-[48px] flex flex-col justify-between">
-              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold leading-tight">Invoice Date</span>
-              <span className="font-mono font-semibold text-black text-[10px]">{invoiceDetails.invoiceDate}</span>
-            </div>
+            {invoiceDetails.includeInvoiceDate && invoiceDetails.invoiceDate && (
+              <div className="p-2 min-h-[48px] flex flex-col justify-between">
+                <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold leading-tight">Invoice Date</span>
+                <span className="font-mono font-semibold text-black text-[10px]">{invoiceDetails.invoiceDate}</span>
+              </div>
+            )}
             <div className="p-2 min-h-[48px] flex flex-col justify-between bg-amber-50/40">
               <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold leading-tight">Debit Date (Return Date)</span>
-              <span className="font-mono font-bold text-amber-950 text-[10px]">{invoiceDetails.returnDate || invoiceDetails.invoiceDate}</span>
+              <span className="font-mono font-bold text-amber-950 text-[10px]">{invoiceDetails.returnDate || invoiceDetails.invoiceDate || '—'}</span>
             </div>
             <div className="p-2 min-h-[48px] flex flex-col justify-between bg-amber-50/30">
               <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold leading-tight">GST Type</span>

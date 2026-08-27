@@ -52,6 +52,7 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
 
   const isDebitNote = invoice.documentType === 'debit_note';
   const isDateOrderInvalid = isDebitNote && Boolean(
+    invoice.invoiceDetails.includeInvoiceDate &&
     invoice.invoiceDetails.invoiceDate &&
     invoice.invoiceDetails.returnDate &&
     invoice.invoiceDetails.returnDate < invoice.invoiceDetails.invoiceDate
@@ -77,7 +78,8 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
     const updatedDetails = {
       ...invoice.invoiceDetails,
       originalInvoiceNo: selectedInv.invoiceDetails.invoiceNo,
-      invoiceDate: selectedInv.invoiceDetails.invoiceDate,
+      invoiceDate: selectedInv.invoiceDetails.invoiceDate || '',
+      includeInvoiceDate: Boolean(selectedInv.invoiceDetails.invoiceDate),
       gstType: selectedInv.invoiceDetails.gstType,
       cgstPercent: selectedInv.invoiceDetails.cgstPercent,
       sgstPercent: selectedInv.invoiceDetails.sgstPercent,
@@ -446,17 +448,39 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
             </h3>
           </div>
 
-          {isDebitNote && (
-            <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-[var(--accent-brass)]/15 text-[var(--accent-brass)] border border-[var(--accent-brass)]/30 font-semibold">
-              Debit Note Mode
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            {isDebitNote && (
+              <label className="flex items-center space-x-2 cursor-pointer select-none bg-[var(--bg-base)] px-2.5 py-1.5 rounded-xl border border-[var(--border-solid)] hover:border-[var(--accent-brass)]/50 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={invoice.invoiceDetails.includeInvoiceDate ?? false}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    updateSubSection('invoiceDetails', 'includeInvoiceDate', checked);
+                    if (checked && !invoice.invoiceDetails.invoiceDate) {
+                      updateSubSection('invoiceDetails', 'invoiceDate', invoice.invoiceDetails.returnDate || new Date().toISOString().split('T')[0]);
+                    }
+                  }}
+                  className="rounded border-[var(--border-solid)] text-[var(--accent-brass)] focus:ring-0 cursor-pointer"
+                />
+                <span className="text-xs font-mono font-medium text-[var(--text-primary)]">
+                  Add Original Invoice Date
+                </span>
+              </label>
+            )}
+
+            {isDebitNote && (
+              <span className="text-[10px] font-mono px-2.5 py-1 rounded-xl bg-[var(--accent-brass)]/15 text-[var(--accent-brass)] border border-[var(--accent-brass)]/30 font-semibold">
+                Debit Note Mode
+              </span>
+            )}
+          </div>
         </div>
 
         {isDebitNote ? (
           /* DEBIT NOTE SPECIFIC META FIELDS */
           <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className={`grid grid-cols-1 sm:grid-cols-2 ${invoice.invoiceDetails.includeInvoiceDate ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-3`}>
               
               {/* Debit Note Number */}
               <div>
@@ -576,18 +600,32 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
                 )}
               </div>
 
-              {/* Original Invoice Date */}
-              <div>
-                <label className="block text-xs font-mono text-[var(--text-muted)] mb-1">
-                  Original Invoice Date <span className="text-[var(--status-error)]">*</span>
-                </label>
-                <input
-                  type="date"
-                  value={invoice.invoiceDetails.invoiceDate}
-                  onChange={(e) => updateSubSection('invoiceDetails', 'invoiceDate', e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
-                />
-              </div>
+              {/* Original Invoice Date (Optional) */}
+              {invoice.invoiceDetails.includeInvoiceDate && (
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-mono text-[var(--text-muted)]">
+                      Original Invoice Date
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        updateSubSection('invoiceDetails', 'includeInvoiceDate', false);
+                        updateSubSection('invoiceDetails', 'invoiceDate', '');
+                      }}
+                      className="text-[10px] font-mono text-[var(--text-muted)] hover:text-[var(--status-error)] cursor-pointer"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <input
+                    type="date"
+                    value={invoice.invoiceDetails.invoiceDate || ''}
+                    onChange={(e) => updateSubSection('invoiceDetails', 'invoiceDate', e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border border-[var(--border-solid)] text-[var(--text-primary)] font-mono focus:border-[var(--accent-brass)] outline-none"
+                  />
+                </div>
+              )}
 
               {/* Debit Date (Return Date) */}
               <div>
@@ -596,7 +634,7 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
                 </label>
                 <input
                   type="date"
-                  value={invoice.invoiceDetails.returnDate || invoice.invoiceDetails.invoiceDate}
+                  value={invoice.invoiceDetails.returnDate || ''}
                   onChange={(e) => updateSubSection('invoiceDetails', 'returnDate', e.target.value)}
                   className={`w-full px-3 py-2 rounded-xl bg-[var(--bg-base)] border font-mono focus:border-[var(--accent-brass)] outline-none ${
                     isDateOrderInvalid
@@ -607,6 +645,25 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
               </div>
 
             </div>
+
+            {/* When Original Invoice Date is hidden, provide a subtle action box like transport details */}
+            {!invoice.invoiceDetails.includeInvoiceDate && (
+              <div className="p-2.5 rounded-xl bg-[var(--bg-base)] border border-[var(--border-hairline)] text-xs text-[var(--text-muted)] flex items-center justify-between">
+                <span>Original Invoice Date is optional. Click <strong>"Add Original Invoice Date"</strong> if you want to include it on the debit note.</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    updateSubSection('invoiceDetails', 'includeInvoiceDate', true);
+                    if (!invoice.invoiceDetails.invoiceDate) {
+                      updateSubSection('invoiceDetails', 'invoiceDate', invoice.invoiceDetails.returnDate || new Date().toISOString().split('T')[0]);
+                    }
+                  }}
+                  className="text-[11px] font-mono text-[var(--accent-brass)] hover:underline cursor-pointer font-semibold shrink-0 ml-2"
+                >
+                  + Add Original Invoice Date
+                </button>
+              </div>
+            )}
 
             {/* Secondary Row: Challan & Agent */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">

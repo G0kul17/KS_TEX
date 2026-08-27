@@ -84,6 +84,7 @@ export interface InvoiceDetails {
   igstPercent: number;
   originalInvoiceNo?: string;
   returnDate?: string;
+  includeInvoiceDate?: boolean;
 }
 
 export interface InvoiceTotals {
