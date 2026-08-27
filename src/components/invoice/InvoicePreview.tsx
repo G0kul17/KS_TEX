@@ -98,46 +98,46 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
         {/* 3. DOCUMENT META ROW */}
         {isDebitNote ? (
           <div className="border-b border-gray-900 grid grid-cols-5 divide-x divide-gray-900 bg-gray-50/40 text-[10px]">
-            <div className="p-2">
-              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold">Debit Note No</span>
-              <span className="font-mono font-bold text-black">{invoiceDetails.invoiceNo}</span>
+            <div className="p-2 min-h-[48px] flex flex-col justify-between">
+              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold leading-tight">Debit Note No</span>
+              <span className="font-mono font-bold text-black text-[10px] break-words">{invoiceDetails.invoiceNo}</span>
             </div>
-            <div className="p-2 bg-amber-50/20">
-              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold">Original Invoice No</span>
-              <span className="font-mono font-bold text-black">{invoiceDetails.originalInvoiceNo || '—'}</span>
+            <div className="p-2 min-h-[48px] flex flex-col justify-between bg-amber-50/20">
+              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold leading-tight">Original Invoice No</span>
+              <span className="font-mono font-bold text-black text-[10px] break-words">{invoiceDetails.originalInvoiceNo || '—'}</span>
             </div>
-            <div className="p-2">
-              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold">Invoice Date</span>
-              <span className="font-mono font-semibold text-black">{invoiceDetails.invoiceDate}</span>
+            <div className="p-2 min-h-[48px] flex flex-col justify-between">
+              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold leading-tight">Invoice Date</span>
+              <span className="font-mono font-semibold text-black text-[10px]">{invoiceDetails.invoiceDate}</span>
             </div>
-            <div className="p-2 bg-amber-50/40">
-              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold">Debit Date (Return Date)</span>
-              <span className="font-mono font-bold text-amber-950">{invoiceDetails.returnDate || invoiceDetails.invoiceDate}</span>
+            <div className="p-2 min-h-[48px] flex flex-col justify-between bg-amber-50/40">
+              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold leading-tight">Debit Date (Return Date)</span>
+              <span className="font-mono font-bold text-amber-950 text-[10px]">{invoiceDetails.returnDate || invoiceDetails.invoiceDate}</span>
             </div>
-            <div className="p-2 bg-amber-50/30">
-              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold">GST Type</span>
-              <span className="font-mono font-bold text-amber-900 truncate block">
+            <div className="p-2 min-h-[48px] flex flex-col justify-between bg-amber-50/30">
+              <span className="text-gray-500 block text-[8px] font-mono uppercase font-bold leading-tight">GST Type</span>
+              <span className="font-mono font-bold text-amber-900 text-[9.5px] break-words leading-tight">
                 {invoiceDetails.gstType === 'INTRA_STATE' ? 'Intra (CGST+SGST)' : 'Inter (IGST)'}
               </span>
             </div>
           </div>
         ) : (
           <div className="border-b border-gray-900 grid grid-cols-4 divide-x divide-gray-900 bg-gray-50/40 text-[10.5px]">
-            <div className="p-2">
-              <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">Invoice No</span>
-              <span className="font-mono font-bold text-black">{invoiceDetails.invoiceNo}</span>
+            <div className="p-2 min-h-[48px] flex flex-col justify-between">
+              <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold leading-tight">Invoice No</span>
+              <span className="font-mono font-bold text-black text-[10.5px] break-words">{invoiceDetails.invoiceNo}</span>
             </div>
-            <div className="p-2">
-              <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">Invoice Date</span>
-              <span className="font-mono font-semibold text-black">{invoiceDetails.invoiceDate}</span>
+            <div className="p-2 min-h-[48px] flex flex-col justify-between">
+              <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold leading-tight">Invoice Date</span>
+              <span className="font-mono font-semibold text-black text-[10.5px]">{invoiceDetails.invoiceDate}</span>
             </div>
-            <div className="p-2">
-              <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">Challan No</span>
-              <span className="font-mono text-black">{invoiceDetails.challanNo || '—'}</span>
+            <div className="p-2 min-h-[48px] flex flex-col justify-between">
+              <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold leading-tight">Challan No</span>
+              <span className="font-mono text-black text-[10.5px] break-words">{invoiceDetails.challanNo || '—'}</span>
             </div>
-            <div className="p-2 bg-amber-50/30">
-              <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold">GST Type</span>
-              <span className="font-mono font-bold text-amber-900">
+            <div className="p-2 min-h-[48px] flex flex-col justify-between bg-amber-50/30">
+              <span className="text-gray-500 block text-[8.5px] font-mono uppercase font-bold leading-tight">GST Type</span>
+              <span className="font-mono font-bold text-amber-900 text-[10px] break-words leading-tight">
                 {invoiceDetails.gstType === 'INTRA_STATE' ? 'Intra-State (CGST+SGST)' : 'Inter-State (IGST)'}
               </span>
             </div>
@@ -169,11 +169,25 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
                 <span className="text-emerald-700 text-[9px] font-sans font-bold">Same as Buyer</span>
               )}
             </div>
-            <div className="font-bold text-xs text-black pt-0.5">{deliveryDetails.companyName || buyerDetails.companyName || '—'}</div>
-            <div className="text-gray-800 text-[10px]">{deliveryDetails.address || buyerDetails.address || '—'}</div>
+            <div className="font-bold text-xs text-black pt-0.5">
+              {deliveryDetails.sameAsBuyer ? (buyerDetails.companyName || '—') : (deliveryDetails.companyName || buyerDetails.companyName || '—')}
+            </div>
+            <div className="text-gray-800 text-[10px]">
+              {deliveryDetails.sameAsBuyer ? (buyerDetails.address || '—') : (deliveryDetails.address || buyerDetails.address || '—')}
+            </div>
             <div className="grid grid-cols-2 gap-2 text-[10px] pt-1">
-              <div><span className="text-gray-500 font-mono">GSTIN:</span> <span className="font-mono font-semibold">{deliveryDetails.gstin || buyerDetails.gstin || '—'}</span></div>
-              <div><span className="text-gray-500 font-mono">State:</span> <span className="font-semibold">{deliveryDetails.state || buyerDetails.state || 'Tamil Nadu'}</span></div>
+              <div>
+                <span className="text-gray-500 font-mono">GSTIN:</span>{' '}
+                <span className="font-mono font-semibold">
+                  {deliveryDetails.sameAsBuyer ? (buyerDetails.gstin || '—') : (deliveryDetails.gstin || buyerDetails.gstin || '—')}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500 font-mono">State:</span>{' '}
+                <span className="font-semibold">
+                  {deliveryDetails.sameAsBuyer ? (buyerDetails.state || 'Tamil Nadu') : (deliveryDetails.state || buyerDetails.state || 'Tamil Nadu')}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -182,25 +196,25 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice, preview
         {/* 5. OPTIONAL TRANSPORT STRIP (5 Columns) */}
         {showTransport && (
           <div className="border-b border-gray-900 grid grid-cols-5 divide-x divide-gray-900 bg-gray-50/50 text-[10px]">
-            <div className="p-2">
-              <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold">Transporter</span>
-              <span className="font-medium truncate block">{transportDetails?.transporter || '—'}</span>
+            <div className="p-2 min-h-[44px] flex flex-col justify-start">
+              <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold mb-0.5 leading-none">Transporter</span>
+              <span className="font-semibold text-[9.5px] text-gray-900 break-words leading-tight">{transportDetails?.transporter || '—'}</span>
             </div>
-            <div className="p-2">
-              <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold">Transporter GSTIN</span>
-              <span className="font-mono font-medium">{transportDetails?.transportGstin || '—'}</span>
+            <div className="p-2 min-h-[44px] flex flex-col justify-start">
+              <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold mb-0.5 leading-none">Transporter GSTIN</span>
+              <span className="font-mono font-medium text-[9px] text-gray-900 break-all leading-tight">{transportDetails?.transportGstin || '—'}</span>
             </div>
-            <div className="p-2">
-              <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold">Vehicle No</span>
-              <span className="font-mono font-semibold">{transportDetails?.vehicleNo || '—'}</span>
+            <div className="p-2 min-h-[44px] flex flex-col justify-start">
+              <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold mb-0.5 leading-none">Vehicle No</span>
+              <span className="font-mono font-semibold text-[9.5px] text-gray-900 break-words leading-tight">{transportDetails?.vehicleNo || '—'}</span>
             </div>
-            <div className="p-2">
-              <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold">L.R. No.</span>
-              <span className="font-mono font-semibold">{transportDetails?.lrNo || '—'}</span>
+            <div className="p-2 min-h-[44px] flex flex-col justify-start">
+              <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold mb-0.5 leading-none">L.R. No.</span>
+              <span className="font-mono font-semibold text-[9.5px] text-gray-900 break-words leading-tight">{transportDetails?.lrNo || '—'}</span>
             </div>
-            <div className="p-2">
-              <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold">L.R. Date</span>
-              <span className="font-mono font-medium">{transportDetails?.lrDate || '—'}</span>
+            <div className="p-2 min-h-[44px] flex flex-col justify-start">
+              <span className="text-gray-500 block font-mono text-[8px] uppercase font-bold mb-0.5 leading-none">L.R. Date</span>
+              <span className="font-mono font-medium text-[9.5px] text-gray-900 break-words leading-tight">{transportDetails?.lrDate || '—'}</span>
             </div>
           </div>
         )}

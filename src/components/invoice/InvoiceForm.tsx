@@ -106,6 +106,15 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoice, onChange, onR
     const currentSection = invoice[section] as Record<string, any>;
     const updatedSection = { ...currentSection, [field]: value };
     const updated = { ...invoice, [section]: updatedSection };
+
+    // When modifying buyerDetails while sameAsBuyer is checked, synchronize deliveryDetails
+    if (section === 'buyerDetails' && invoice.deliveryDetails?.sameAsBuyer) {
+      updated.deliveryDetails = {
+        ...updated.deliveryDetails,
+        [field]: value,
+      };
+    }
+
     recalculateTotals(updated);
   };
 
